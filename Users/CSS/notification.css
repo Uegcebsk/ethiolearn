@@ -1,0 +1,54 @@
+ .container {
+            margin-top: 50px;
+        }
+        .notification-icon {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .notification-icon img {
+            width: 40px;
+            height: auto;
+        }
+        .notification-icon .badge {
+            position: absolute;
+            top: 0;
+            right: -10px;
+            padding: 5px 10px;
+            border-radius: 50%;
+            background-color: #dc3545;
+            color: #fff;
+            font-size: 12px;
+        }
+        .notification-container {
+            margin-top: 20px;
+        }
+        .notification {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+        .notification-content {
+            word-wrap: break-word;
+        }
+        .notification-actions {
+            margin-top: 10px;
+        }
+        .btn-mark-read {
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .btn-mark-read[disabled] {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .pagination {
+            margin-top: 20px;
+        }
+    

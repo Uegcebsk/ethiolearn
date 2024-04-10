@@ -1,0 +1,140 @@
+<?php 
+session_start();
+if (!isset($_SESSION['l_id'])) {
+    header('Location: Index.php');
+}
+?><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <title>Ethio Learn</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
+     <!-- Bootstrap  -->
+     <link rel="stylesheet" href="/ethioleant/bootstrap/css/bootstrap.min.css">
+   
+</head>
+<body>
+   <input type="checkbox" id="menu-toggle">
+    <div class="sidebar">
+        <div class="side-header">
+            <h3>Ethio<span>learn</span></h3>
+        </div>
+        
+        <div class="side-content">
+            <div class="profile">
+                <div class="profile-img bg-img" style="background-image: url(img/3.jpeg)"></div>
+                <?php 
+            include_once("../DB_Files/db.php");
+            $l_id = $_SESSION['l_id'];
+            $sql = "SELECT l_name FROM lectures WHERE l_id = '$l_id'";
+            $result = mysqli_query($conn, $sql);
+            $row = mysqli_fetch_assoc($result);
+            echo $row['l_name'];
+            ?>
+            </div>
+
+            <div class="side-menu">
+                <ul>
+                    <li>
+                       <a href="Dashboard.php" class="active">
+                            <span class="las la-home"></span>
+                            <small>Dashboard</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="Course.php">
+                            <span class="las la-user-alt"></span>
+                            <small>Course</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="Lesson.php">
+                            <span class="las la-envelope"></span>
+                            <small>Lesson</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="Students.php">
+                            <span class="las la-clipboard-list"></span>
+                            <small>Students</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="material.php">
+                            <span class="las la-tasks"></span>
+                            <small>Material</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="exam_catagories.php">
+                            <span class="las la-tasks"></span>
+                            <small>Exam Catagories</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="add material.php">
+                            <span class="las la-shopping-cart"></span>
+                            <small>Add material</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="AddQuizz.php">
+                            <span class="las la-shopping-cart"></span>
+                            <small>Add Quizz</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="resultt.php">
+                            <span class="las la-shopping-cart"></span>
+                            <small>All Result</small>
+                        </a>
+                    </li>
+                    <li>
+                       <a href="Feedbackmy.php">
+                            <span class="las la-shopping-cart"></span>
+                            <small>Feedback</small>
+                        </a>
+                    </li>
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="main-content">
+        
+        <header>
+            <div class="header-content">
+                <label for="menu-toggle">
+                    <span class="las la-bars"></span>
+                </label>
+                
+                <div class="header-menu">
+                    <label for="">
+                        <span class="las la-search"></span>
+                    </label>
+                    
+                    <div class="notify-icon">
+                        <span class="las la-envelope"></span>
+                        <span class="notify">4</span>
+                    </div>
+                    
+                    <div class="notify-icon">
+                        <span class="las la-bell"></span>
+                        <span class="notify">3</span>
+                    </div>
+                    
+                    <div class="user">
+                        <div class="bg-img" style="background-image: url(img/1.jpeg)"></div>
+                        
+                        <span class="las la-power-off"></span>
+                        <span>Logout</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+      
