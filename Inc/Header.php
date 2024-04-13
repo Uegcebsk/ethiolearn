@@ -10,44 +10,7 @@
     <link rel="stylesheet" href="/ethiolearn/Inc/Header.css">
     <link rel="stylesheet" href="/ethiolearn/CSS/responsiveness.css">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v2.1.6/css/unicons.css">
-    <style>
-    /* Additional CSS for translation button */
-    #google_translate_element {
-        margin-left: 20px;
-        display:flex;
-    }
-
-    /* Hide Google Translate icon */
-    
-    /* Styling for translation button */
-    #google_translate_element button {
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        padding: 10px 10px; /* Adjust padding for increased width and height */
-        border-radius: 5px;
-        font-size: 10px; /* Increase font size */
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    #google_translate_element button:hover {
-        background-color: #0056b3;
-    }
-
-    /* Reduce space between language selector and button */
-    #google_translate_element .goog-te-gadget-simple {
-        margin-top: -5px;
-    }
-
-    /* Responsive styling */
-    @media screen and (max-width: 768px) {
-        #google_translate_element {
-            margin-left: 10px;
-            margin-top: 10px;
-        }
-    }
-</style>
+   
 
 </head>
 
@@ -108,20 +71,6 @@
         </div>
     </nav>
 
-    <!-- Your existing scripts -->
-
-    <!-- Google Translate API script -->
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'am,om', // Target languages (Amharic, Afan Oromo)
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-        }
-    </script>
 
     <script>
         //change color nav
