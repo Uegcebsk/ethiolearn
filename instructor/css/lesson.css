@@ -1,0 +1,75 @@
+.container {
+    max-width:100%;
+    margin: 5 auto;
+    padding: 5%;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.search-bar {
+    margin-bottom: 20px;
+}
+
+.lesson-list {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.lesson-list th, .lesson-list td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.lesson-list th {
+    background-color: #f2f2f2;
+    color: #0c0c0c;
+    font-weight: 600;
+}
+
+.lesson-list td {
+    color: #0c0c0c;
+}
+
+.lesson-id {
+    width: 15%;
+}
+
+.lesson-name {
+    width: 60%;
+}
+
+.lesson-actions {
+    width: 25%;
+}
+
+.lesson-actions a {
+    margin-right: 10px;
+    text-decoration: none;
+    color: #007bff;
+}
+
+.lesson-actions a i {
+    margin-right: 5px;
+}
+
+.pagination {
+    margin-top: 20px;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 8px;
+    text-decoration: none;
+    color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 5px;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: #fff;
+}

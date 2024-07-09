@@ -42,6 +42,56 @@ if (isset($_POST['submit'])) {
         }
     }
 }
+
+// Function to add notification
+function addNotification($courseId, $message, $conn)
+{
+    $notificationType = 'exam';
+    $notificationDate = date("Y-m-d H:i:s");
+    
+    $sql = "INSERT INTO notifications (stu_id, material_id, notification_type, notification_message, notification_date, is_read, course_id) 
+            SELECT co.stu_id, NULL, ?, ?, ?, 0, ? 
+            FROM courseorder co 
+            WHERE co.course_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sssii", $notificationType, $message, $notificationDate, $courseId, $courseId);
+    $stmt->execute();
+    $stmt->close();
+}
+
+// Handling activation
+if (isset($_POST['activate'])) {
+    $examId = $_POST['exam_id'];
+    $sql = "UPDATE exam_category SET active = 1 WHERE id = $examId";
+    if ($conn->query($sql) === TRUE) {
+        $msg = displayMessage('Exam Activated Successfully');
+        // Add activation notification
+        $courseIdQuery = "SELECT course_id FROM exam_category WHERE id = $examId";
+        $result = $conn->query($courseIdQuery);
+        $courseIdRow = $result->fetch_assoc();
+        $courseId = $courseIdRow['course_id'];
+        addNotification($courseId, 'An exam has been activated', $conn);
+    } else {
+        $msg = displayMessage('Exam Activation Failed', 'warning');
+    }
+}
+
+// Handling deactivation
+if (isset($_POST['deactivate'])) {
+    $examId = $_POST['exam_id'];
+    $sql = "UPDATE exam_category SET active = 0 WHERE id = $examId";
+    if ($conn->query($sql) === TRUE) {
+        $msg = displayMessage('Exam Deactivated Successfully');
+        // Add deactivation notification
+        $courseIdQuery = "SELECT course_id FROM exam_category WHERE id = $examId";
+        $result = $conn->query($courseIdQuery);
+        $courseIdRow = $result->fetch_assoc();
+        $courseId = $courseIdRow['course_id'];
+        addNotification($courseId, 'An exam has been deactivated', $conn);
+    } else {
+        $msg = displayMessage('Exam Deactivation Failed', 'warning');
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,7 +109,7 @@ if (isset($_POST['submit'])) {
 <body>
 <div class="container" style="padding:5%";>
     <div class="row justify-content-center">
-        <div class="col-lg-6 mt=4">
+        <div class="col-lg-11 mt=4">
             <div class="card bg-transparent">
                 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
                     <div class="card-header bg-dark text-light"><strong>Add Exam Category</strong></div>
@@ -104,16 +154,16 @@ if (isset($_POST['submit'])) {
                 </form>
             </div>
         </div>
-    </div>
-
-        <div class="col-lg-6">
+<br>
+<br>
+        <div class="col-lg-11" style="margin-top:5%;">
             <div class="card bg-transparent">
                 <div class="card-header bg-dark">
                     <strong class="card-title text-light">Exam Categories</strong>
                 </div>
                 <div class="card-body">
                     <?php
-                    $sql = "SELECT ec.id, ec.exam_name, ec.exam_time,ec.assessment_type, c.course_name 
+                    $sql = "SELECT ec.id, ec.exam_name, ec.exam_time,ec.assessment_type, ec.active, c.course_name 
                             FROM exam_category ec
                             INNER JOIN course c ON ec.course_id = c.course_id
                             WHERE c.lec_id = '{$_SESSION['l_id']}'";
@@ -128,6 +178,7 @@ if (isset($_POST['submit'])) {
                                 <th class="text-dark fw-bolder">Category Name</th>
                                 <th class="text-dark fw-bolder">Time</th>
                                 <th class="text-dark fw-bolder">Course</th>
+                                <th class="text-dark fw-bolder">Status</th>
                                 <th class="text-dark fw-bolder">Action</th>
                             </tr>
                             </thead>
@@ -139,6 +190,16 @@ if (isset($_POST['submit'])) {
                                     <td class="text-dark fw-bolder"><?php echo $row['exam_name']; ?></td>
                                     <td class="text-dark fw-bolder"><?php echo $row['exam_time']; ?></td>
                                     <td class="text-dark fw-bolder"><?php echo $row['course_name']; ?></td>
+                                    <td>
+                                        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
+                                            <input type="hidden" name="exam_id" value="<?php echo $row['id']; ?>">
+                                            <?php if ($row['active'] == 1) { ?>
+                                                <button type="submit" class="btn btn-success" name="deactivate">Active</button>
+                                            <?php } else { ?>
+                                                <button type="submit" class="btn btn-secondary" name="activate">Inactive</button>
+                                            <?php } ?>
+                                        </form>
+                                    </td>
                                     <td>
                                         <form action="editExam.php" method="POST" class="d-inline">
                                             <input type="hidden" name="id" value='<?php echo $row["id"]; ?>'>

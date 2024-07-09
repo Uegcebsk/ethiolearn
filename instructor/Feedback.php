@@ -89,7 +89,7 @@ if (isset($_REQUEST['delete'])) {
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
 }
-
+?>
 <form action="" method="POST" class="d-inline">
     <input type="hidden" name="id" value='<?php echo $row["f_id"]; ?>'>
     <input type="text" name="reply_content" placeholder="Enter your reply">

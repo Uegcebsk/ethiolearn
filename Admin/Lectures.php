@@ -3,11 +3,11 @@ include_once("Header.php");
 include_once("../DB_Files/db.php");
 ?>
 
-
-<div class="col-sm-9 mt-5">
+<div class="container" style="padding:5%;">
+<div class="col-sm-12 mt-5">
     <p class="bg-dark text-white p-2">List of Lectures</p>
     <?php
-    $sql = "SELECT * FROM lectures";
+    $sql = "SELECT * FROM lectures where password_changed =1";
     $result = $conn->query($sql);
     if ($result->num_rows > 0) {
     ?>
@@ -43,6 +43,10 @@ include_once("../DB_Files/db.php");
             } ?>
         </tbody>
     </table>
+    <div>
+    <a href="addLectures.php" class="btn btn-danger box">
+        <i class="uil uil-plus fa-2x" style="padding:5%;"></i>
+    </a>
     <?php }else{ echo "<p class='text-dark p-2 fw-bolder'>Lecture Not Found. </p>";} 
     
     if(isset($_REQUEST['delete'])){
@@ -60,9 +64,7 @@ include_once("../DB_Files/db.php");
 </div>
 
 
-<div>
-    <a href="addLectures.php" class="btn btn-danger box">
-        <i class="uil uil-plus fa-2x"></i>
-    </a>
+
+</div>
 </div>
 </div>

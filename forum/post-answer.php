@@ -2,6 +2,12 @@
 include_once("../DB_Files/db.php");
 include_once("../Inc/Header.php");
 
+// Check if user is not logged in, redirect to login page
+if (!isset($_SESSION['stu_id'])) {
+    header("Location: /ethiolearn/Login&SignIn.php");
+    exit();
+}
+
 $A_body = $_POST["A_body"];
 $A_stu_id = $_SESSION['stu_id'];
 $qid = $_SESSION['qid'];

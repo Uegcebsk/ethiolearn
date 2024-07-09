@@ -22,8 +22,8 @@ if (isset($_REQUEST['reqUpdate'])) {
 }
 ?>
 
-
-<div class="col-sm-6 mt-5 jumbotron">
+<div class="container" style="padding:7%;">
+<div class="col-sm-12 mt-5 jumbotron">
     <h3 class="text-center">Edit lectures Details</h3>
     <?php
     if (isset($_REQUEST['view'])) {
@@ -31,9 +31,6 @@ if (isset($_REQUEST['reqUpdate'])) {
         $result = $conn->query($sql);
         $row = $result->fetch_assoc();
     }
-
-
-
     ?>
     <form action="" method="POST" enctype="multipart/form-data">
         <br>

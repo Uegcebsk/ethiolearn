@@ -44,8 +44,9 @@ if (isset($_REQUEST['courseSubmitBtn'])) {
     }
 }
 ?>
-<div class="col-sm-6 mt-5 jumbotron">
-    <h3 class="text-center">Add New Course</h3>
+<div class="container" style="padding-left:6%;">
+<div class="col-sm-12 mt-5 jumbotron">
+    <h3 class="text-center" style="margin-top:5%;">Add New Course</h3>
     <form action="" method="POST" enctype="multipart/form-data">
         <br>
         <?php if (isset($msg)) {

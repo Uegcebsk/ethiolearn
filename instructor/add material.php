@@ -37,22 +37,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             finfo_close($finfo);
 
             // Map MIME type to material type
-            $allowedTypes = ['Document' => ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-                             'Presentation' => ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'],
-                             'PDF' => 'application/pdf'];
+            $allowedTypes = [
+                'Document' => ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+                'Presentation' => ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation'],
+                'PDF' => 'application/pdf'
+            ];
 
             // Check if the MIME type matches the selected material type
             if (!isset($allowedTypes[$material_type]) || !in_array($mime_type, (array) $allowedTypes[$material_type])) {
                 $errorMessage = "Invalid file type selected. Please choose a {$material_type} file.";
             } else {
-                $material_url = "material/" . $file["name"];
+                // Specify the directory where the file will be moved
+                $target_directory = "../instructor/material/";
 
-                // Move uploaded file to the uploads directory
-                if (move_uploaded_file($file["tmp_name"], $material_url)) {
+                // Get the file extension
+                $file_extension = pathinfo($file["name"], PATHINFO_EXTENSION);
+
+                // Generate a unique filename to prevent conflicts
+                $file_name = uniqid() . '_' . $material_name . '.' . $file_extension;
+
+                // File path to move the uploaded file
+                $target_path = $target_directory . $file_name;
+
+                // Move uploaded file to the target directory
+                if (move_uploaded_file($file["tmp_name"], $target_path)) {
                     // Insert material details into the database
                     $sql_insert_material = "INSERT INTO materials (course_id, material_name, material_type, material_desc, material_url, upload_date) VALUES (?, ?, ?, ?, ?, NOW())";
                     $stmt_insert_material = $conn->prepare($sql_insert_material);
-                    $stmt_insert_material->bind_param("issss", $course_id, $material_name, $material_type, $material_description, $material_url); // Corrected parameter types
+                    $stmt_insert_material->bind_param("issss", $course_id, $material_name, $material_type, $material_description, $target_path); // Use the target path
                     
                     if ($stmt_insert_material->execute()) {
                         // Generate notification for material upload
@@ -60,12 +72,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $notification_message = "New material added: $material_name";
                         $notification_date = date("Y-m-d H:i:s");
 
-                        $insert_notification_query = "INSERT INTO notifications (stu_id, material_id, notification_type, notification_message, notification_date, is_read) 
-                        SELECT co.stu_id, LAST_INSERT_ID(), ?, ?, ?, 0 
+                        $insert_notification_query = "INSERT INTO notifications (stu_id, material_id, notification_type, notification_message, notification_date, is_read, course_id) 
+                        SELECT co.stu_id, LAST_INSERT_ID(), ?, ?, ?, 0, ? 
                         FROM courseorder co 
                         WHERE co.course_id = ?";
-$stmt_insert_notification = $conn->prepare($insert_notification_query);
-$stmt_insert_notification->bind_param("sssi", $notification_type, $notification_message, $notification_date, $course_id);
+                        $stmt_insert_notification = $conn->prepare($insert_notification_query);
+                        $stmt_insert_notification->bind_param("sssii", $notification_type, $notification_message, $notification_date, $course_id, $course_id);
 
                         if ($stmt_insert_notification->execute()) {
                             $successMessage = "Material uploaded successfully.";
@@ -91,6 +103,7 @@ $stmt_insert_notification->bind_param("sssi", $notification_type, $notification_
 
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -99,7 +112,6 @@ $stmt_insert_notification->bind_param("sssi", $notification_type, $notification_
     <title>Upload Material</title>
     <link rel="stylesheet" href="css/style.css"> <!-- Link to external CSS file -->
     <style>
-       <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -167,45 +179,43 @@ $stmt_insert_notification->bind_param("sssi", $notification_type, $notification_
             display: <?php echo !empty($successMessage) ? 'block' : 'none'; ?>;
         }
     </style>
-    </style>
 </head>
 <body>
     <div class="container">
         <div class="row justify-content-center">
-        <div class="col-md-13 mt-5" >
-        <h2>Upload Material</h2>
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data" id="uploadForm">
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data" id="uploadForm">
-            <label for="course_id">Select Course:</label>
-            <select name="course_id" id="course_id">
-                <?php
-                while ($row = $result_select_courses->fetch_assoc()) {
-                    echo '<option value="' . $row['course_id'] . '">' . $row['course_name'] . '</option>';
-                }
-                ?>
-            </select>
-            <label for="material_name">Material Name:</label>
-            <input type="text" name="material_name" id="material_name" placeholder="Enter material name">
-            <label for="material_type">Material Type:</label>
-            <select name="material_type" id="material_type">
-                <option value="Document">Document</option>
-                <option value="Presentation">Presentation</option>
-                <option value="PDF">PDF</option>
-                <!-- Add more options if needed -->
-            </select>
-            <label for="material_description">Material Description:</label>
-            <textarea name="material_description" id="material_description" rows="5" placeholder="Enter material description"></textarea>
-            <label for="material_file">Choose File:</label>
-            <input type="file" name="material_file" id="material_file">
-            <div id="fileError" class="error"><?php echo $errorMessage; ?></div>
-            <div id="successMessage" class="success"><?php echo $successMessage; ?></div>
-            <button type="submit" id="uploadBtn">Upload</button>
-        </form>
-        </form>
+            <div class="col-md-13 mt-5">
+                <h2>Upload Material</h2>
+                <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data" id="uploadForm">
+                    <label for="course_id">Select Course:</label>
+                    <select name="course_id" id="course_id">
+                        <?php
+                        while ($row = $result_select_courses->fetch_assoc()) {
+                            echo '<option value="' . $row['course_id'] . '">' . $row['course_name'] . '</option>';
+                        }
+                        ?>
+                    </select>
+                    <label for="material_name">Material Name:</label>
+                    <input type="text" name="material_name" id="material_name" placeholder="Enter material name">
+                    <label for="material_type">Material Type:</label>
+                    <select name="material_type" id="material_type">
+                        <option value="Document">Document</option>
+                        <option value="Presentation">Presentation</option>
+                        <option value="PDF">PDF</option>
+                        <!-- Add more options if needed -->
+                    </select>
+                    <label for="material_description">Material Description:</label>
+                    <textarea name="material_description" id="material_description" rows="5" placeholder="Enter material description"></textarea>
+                    <label for="material_file">Choose File:</label>
+                    <input type="file" name="material_file" id="material_file">
+                    <div id="fileError" class="error"><?php echo $errorMessage; ?></div>
+                    <div id="successMessage" class="success"><?php echo $successMessage; ?></div>
+                    <button type="submit" id="uploadBtn">Upload</button>
+                </form>
+            </div>
+        </div>
     </div>
 
-    <script src="js/script.js"></script> <!-- Link to external JavaScript file -->
-     <script>
+    <script>
         // Script to hide error and success messages after a certain time
         document.addEventListener("DOMContentLoaded", function() {
             var errorDiv = document.getElementById('fileError');

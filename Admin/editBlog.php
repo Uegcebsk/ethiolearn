@@ -26,8 +26,8 @@ if (isset($_REQUEST['reqUpdate'])) {
 }
 ?>
 
-
-<div class="col-sm-6 mt-5 jumbotron">
+<div class="container" style="padding:7%;">
+<div class="col-sm-11 mt-6 jumbotron">
     <h3 class="text-center">Edit Blog Details</h3>
     <?php
     if (isset($_REQUEST['view'])) {
@@ -103,8 +103,7 @@ if (isset($_REQUEST['reqUpdate'])) {
 
     </form>
 </div>
-
-
+</div>
 <?php
 include_once("Footer.php");
 ?>

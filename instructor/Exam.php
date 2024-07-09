@@ -12,7 +12,7 @@ function displayMessage($msg, $type = 'success')
 function fetchCourseOptions()
 {
     global $conn;
-    $sql = "SELECT * FROM course";
+    $sql = "SELECT * FROM course where lec_id=$_SESSION[l_id]";
     $result = $conn->query($sql);
     $options = '<option value="" selected disabled hidden>--Select Category--</option>';
     while ($row = $result->fetch_assoc()) {
@@ -40,7 +40,7 @@ if (isset($_POST['submit'])) {
     }
 }
 ?>
-
+<div class="d-flex justify-content-center">
 <div class="col-sm-9 mt-5">
     <br><br>
     <div class="animated fadeIn">
@@ -105,11 +105,11 @@ if (isset($_POST['submit'])) {
                                     echo '
                                         <form action="editExam.php" method="POST" class="d-inline">
                                             <input type="hidden" name="id" value=' . $row["id"] . '>
-                                            <button type="submit" class="btn btn-info mr-3" name="view" value="View"><i class="uil uil-pen"></i></button>
+                                            <button type="submit" class="btn btn-info mr-3" name="view" value="View"><i class="fas fa-eye"></i></button>
                                         </form>
                                         <form action="" method="POST" class="d-inline">
                                             <input type="hidden" name="id" value=' . $row["id"] . '>
-                                            <button type="submit" class="btn btn-secondary" name="delete" value="Delete"><i class="uil uil-trash-alt"></i></button>
+                                            <button type="submit" class="btn btn-secondary" name="delete" value="Delete"><i class="fas fa-trash"></i></button>
                                         </form>
                                     </td>
                                 </tr>';
@@ -136,4 +136,5 @@ if (isset($_POST['submit'])) {
             </div>
         </div>
     </div>
+</div>
 </div>

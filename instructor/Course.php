@@ -4,8 +4,10 @@ include_once("header copy.php");
 ?>
 <style>
     .container{
-        padding: 5%;
-    }
+        margin-top: 7%;
+    padding-left: 7%;
+}
+
 </style>
 
 <div class="d-flex justify-content-center"> <!-- Added div to center content -->

@@ -1,13 +1,19 @@
 <link rel="stylesheet" href="Inc/Footer.css">
 <link rel="stylesheet" href="CSS/responsiveness.css">
+
 <footer class="footer">
     <div class="container footer__container">
         <div class="footer__1">
         <a class="footer__logo" href="index.php">
-                <h4>ethio learn Education Center</h4> 
-                <p>Education is the place where learning begins but ends nowhere.</p>
+        <h4 class="title">
+                    <span style="color: #90EE90;">Ethio</span>
+                    <span style="color: gold;">learn</span>
+                    <br>
+                    <span style="color: red;">Educational Center</span>
+                </h4>
             </a>
         </div>
+        
 
         <div class="footer__2">
             <h4>Permalinks</h4>
@@ -25,15 +31,16 @@
             <li><a href="#">Privacy Policy</a></li>
             <li><a href="#">Terms and Conditions</a></li>
             <li><a href="#">Refund Policy</a></li>
+            <li><a href="/ethiolearn/Admin/index.php">Admin and instructor</a></li> 
             </ul>
         </div>
 
         <div class="footer__4">
             <h4>Contact Us</h4>
             <div>
-                <p>+9411-2324345</p>
+                <p>+251 977287978</p>
                 <br>
-                <p>Info@Imperial@gmail.com</p>
+                <p>Ethiolearn@gmail.com</p>
             </div>
 
             <ul class="footer__socials">
@@ -46,7 +53,7 @@
 
     </div>
     <div class="footer__copyright">
-            <small>Copyright &copy; Imperial Academy</small>
+            <small>Copyright &copy; etho learn Academy</small>
         </div>
 </footer>    
 </body>

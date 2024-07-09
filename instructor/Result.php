@@ -34,7 +34,7 @@ include_once("../DB_Files/db.php");
 
 <?php
 $output='';
-$sql="SELECT * FROM exam_result WHERE exam_type LIKE '%".$_POST["search"]."%'";
+$sql="SELECT * FROM exam_results WHERE exam_type LIKE '%".$_POST["search"]."%'";
 $result=mysqli_query($conn,$sql);
 if(mysqli_num_rows($result)>0){
     $output .='

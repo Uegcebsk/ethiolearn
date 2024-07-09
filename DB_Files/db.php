@@ -1,7 +1,7 @@
 <?php
 $host = "localhost";
 $user = "root";
-$database = "imperia";
+$database = "ethiolearning";
 $password = "";
 
 if ($conn = new mysqli($host, $user, $password, $database)) {

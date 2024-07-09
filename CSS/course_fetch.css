@@ -1,0 +1,90 @@
+ .alert {
+        text-align: center;
+        color: red;
+    }
+
+    .courses {
+        padding-top: 1rem;
+    }
+
+    .courses__container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 2fr));
+        gap: 2rem;
+    }
+
+    .course {
+        border: 1px solid transparent;
+        background: var(--color-light);
+        transition: var(--transition);
+        border-radius: 10px;
+        overflow: hidden; /* Added overflow */
+    }
+
+    .course:hover {
+        background: transparent;
+        border-color: var(--color-black);
+    }
+
+    .course__image {
+        position: relative;
+        width: 100%;
+        height: 180px;
+        overflow: hidden;
+    }
+
+    .course__image img {
+        width: 100%;
+        height: auto;
+        transition: transform 0.3s ease;
+    }
+
+    .course__image:hover img {
+        transform: scale(1.1);
+    }
+
+    .price-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: rgb(254, 195, 31);
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+
+    .course__info {
+        padding: 1.5rem;
+        background-color: rgb(255, 177, 20);
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    .course__info h3,
+    .course__info h5 {
+        margin-top: 0;
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+        text-decoration: none !important; /* Ensure the underline is removed */
+    }
+
+    .course__info h5 {
+        margin-bottom: 1rem;
+        font-size: 1rem;
+    }
+
+    .course__info .button {
+        display: inline-block;
+        background-color:green;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .course__info .button:hover {
+        background-color: var(--color-primary-dark);
+    }

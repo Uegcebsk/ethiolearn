@@ -1,8 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Work+Sans&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Titillium+Web&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Smooch+Sans:wght@100&display=swap');
+
 :root {
     /* COLORS */
     --white: #e9e9e9;
@@ -35,7 +31,7 @@ body {
 .form__title {
     margin: 0;
     font-weight: 900;
-    font-size: 45px;
+    font-size: 25px;
     margin-bottom: 1.25rem;
     font-weight: 900;
     font-family: 'Smooch Sans', sans-serif;
@@ -493,9 +489,7 @@ CORE STYLES
 }
 
 .toggle__input {
-    /*
-    The pattern by Sara Soueidan https://www.sarasoueidan.com/blog/inclusively-hiding-and-styling-checkboxes-and-radio-buttons/
-    */
+
     width: var(--uiToggleSize);
     height: var(--uiToggleSize);
     opacity: 0;

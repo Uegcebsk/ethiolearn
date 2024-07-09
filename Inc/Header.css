@@ -1,14 +1,45 @@
-@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300&display=swap');
-* {
-    margin: 0;
-    padding: 0;
-    border: 0;
-    outline: 0;
-    text-decoration: none;
-    list-style: none;
-    box-sizing: border-box;
-    /* font-family: 'Titillium Web', sans-serif; */
-    font-family: Arial, Helvetica, sans-serif;
+
+.goog-logo-link,.goog-te-gadget span{
+
+    display:none !important;
+    
+    }
+    
+    .goog-te-gadget{
+    
+    color:transparent!important;
+    font-size :0;
+    
+    }
+    .goog-te-banner-frame{
+     display:none !important;
+     }
+     .goog-te-gadget img{
+        display:none !important;
+    }
+    body > .skiptranslate {
+        display: none;
+    }
+    body {
+        top: 0px !important;
+    }
+    .google_translate_element{
+        padding: 10px;
+        display: center;
+    }
+/* Style for the language switcher container */
+#language-switcher-container {
+    position: relative;
+    display: none; /* Initially hide the container */
+    margin-right: 20px; /* Adjust as needed */
+}
+
+/* Style for the language switcher button */
+
+
+/* Style for the Google Translate button */
+.goog-te-gadget {
+    white-space: nowrap;
 }
 
 :root {
@@ -36,13 +67,10 @@ body {
     background: white
 }
 
-.container {
-    width: var(--container-width-1g);
-    margin: 0 auto;
-}
+
 
 section {
-    padding: 6rem 0;
+    padding: 5%;
 }
 
 section h2 {
@@ -58,7 +86,7 @@ p {
 h1,
 h2,
 h3,
-h4,
+
 h5 {
     line-height: 1.2;
     letter-spacing: 0.5px;
@@ -76,9 +104,7 @@ h3 {
     font-size: 1.6rem;
 }
 
-h4 {
-    font-size: 1.3rem;
-}
+
 
 a {
     color: var(--color-black);
@@ -111,58 +137,7 @@ img {
     background: var(--color-danger);
     color: var(--color-white);
 }
-
-.title {
-    font-size: 2rem;
-    line-height: 1.2;
-    text-align: center;
-  
-}
-
-
-/* .title {
-    width: 200px;
-    line-height: 1.2;
-} */
-
-.custom__links {
-    text-decoration: none;
-}
-
-
-/* nav */
-
-nav {
-    background: transparent;
-    width: 100vw;
-    height: 5rem;
-    position: fixed;
-    z-index: 11;
-}
-
-.window-scroll {
-    background: var(--color-white);
-    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.2);
-}
-
-.nav__container {
-    height: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-nav button {
-    display: none;
-}
-
-.nav__menu {
-    display: flex;
-    align-items: center;
-    gap: 2.75rem;
-    color: goldenrod; /* Set the font color to gold */
-}
-
+ 
 
 .joinBtn {
     background: var(--color-danger);
@@ -174,17 +149,6 @@ nav button {
 .joinBtn:hover {
     background-color: var(--color-white);
     color: var(--color-black);
-}
-
-.nav__menu a {
-    color: #FFC000;
-    font-weight: 600;
-    font-size: 1.2rem;
-    transition: var(--transition);
-}
-
-.nav__menu a:hover {
-    color: #f58c14;
 }
 
 i {

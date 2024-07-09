@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['stu_id'])) {
     $answer = trim($_POST["answer"]);
     if (empty($answer)) {
         echo "Answer field is empty.";
-    } elseif (strlen($answer) < 10 || strlen($answer) > 90) {
+    } elseif (strlen($answer) < 10 || strlen($answer) > 200) {
         echo "Answer must be between 10 and 100 characters.";
     } else {
         // Retrieve Q_id and answer from the form
@@ -20,8 +20,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_SESSION['stu_id'])) {
         $stmt->bind_param("iss", $qid, $answer, $stu_id);
 
         if ($stmt->execute()) {
-            // Get the ID of the inserted answer
-            $answer_id = $stmt->insert_id;
             echo "success"; // Send success message back to the AJAX request
         } else {
             echo "Error submitting answer. Please try again.";

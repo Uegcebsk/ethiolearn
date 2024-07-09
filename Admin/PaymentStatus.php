@@ -3,7 +3,7 @@ include_once("Header.php");
 include_once("../DB_Files/db.php");
 ?>
 
-<div class="col-sm-9 mt-5">
+<div class="container" style="padding: 6%;">
     <p class="bg-dark text-white p-2">List of Payment Status</p>
     <?php
     $sql = "SELECT * FROM courseorder";

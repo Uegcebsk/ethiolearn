@@ -2,9 +2,13 @@
 include_once("Header.php");
 include_once("../DB_Files/db.php");
 ?>
-
-
-<div class="col-sm-9 mt-5">
+<style>
+    .button{
+        padding:6%;
+    }
+</style>
+<div class="container" style="padding:6%";>
+<div class="col-sm-12 mt-5">
     <p class="bg-dark text-white p-2">List of Blogs</p>
     <?php
     $sql = "SELECT * FROM Blog";
@@ -33,7 +37,7 @@ include_once("../DB_Files/db.php");
                 <form action="" method="POST" class="d-inline">
                 <input type="hidden" name="id" value='.$row["b_id"].'>
                     <button type="submit" class="btn btn-secondary" name="delete" value="Delete">
-                        <i class="uil uil-trash-alt"></i>
+                        <i class="uil uil-trash-alt" ></i>
                     </button>
                     </form>
                 </td>
@@ -56,13 +60,15 @@ include_once("../DB_Files/db.php");
     ?>
 </div>
 </div>
-
-
 <div>
-    <a href="addBlog.php" class="btn btn-danger box">
-        <i class="uil uil-plus fa-2x"></i>
+    <a href="addBlog.php" class="btn btn-danger" box style="padding:6%" >
+        <i class="uil uil-plus fa-2x">Add Blogs</i>
     </a>
 </div>
+</div>
+
+
+
 </div>
 
 <?php

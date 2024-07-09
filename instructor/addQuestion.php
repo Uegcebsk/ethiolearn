@@ -80,20 +80,30 @@ if (isset($_POST['quesSubmitBtn'])) {
                         $notification_message = "New quiz question added: $add_ques";
                         $notification_date = date("Y-m-d H:i:s");
 
-                        // Insert notification into database
-                        $insert_notification_query = "INSERT INTO notifications (notification_type, notification_message, notification_date, is_read) 
-                                                      VALUES (?, ?, ?, 0)";
-                        $stmt_insert_notification = $conn->prepare($insert_notification_query);
-                        
-                        // Bind parameters
-                        $stmt_insert_notification->bind_param("sss", $notification_type, $notification_message, $notification_date);
+                        // Get the course_id for the notification
+                        $courseQuery = "SELECT course_id FROM course WHERE course_name='$name' LIMIT 1";
+                        $courseResult = $conn->query($courseQuery);
+                        if ($courseResult->num_rows > 0) {
+                            $courseRow = $courseResult->fetch_assoc();
+                            $course_id = $courseRow['course_id'];
 
-                        if ($stmt_insert_notification->execute()) {
-                            // Notification added successfully
+                            // Insert notification into database
+                            $insert_notification_query = "INSERT INTO notifications (notification_type, notification_message, notification_date, is_read, course_id) 
+                                                          VALUES (?, ?, ?, 0, ?)";
+                            $stmt_insert_notification = $conn->prepare($insert_notification_query);
+                            
+                            // Bind parameters
+                            $stmt_insert_notification->bind_param("sssi", $notification_type, $notification_message, $notification_date, $course_id);
+
+                            if ($stmt_insert_notification->execute()) {
+                                // Notification added successfully
+                            } else {
+                                $errorMessage = "Failed to add notification";
+                            }
+                            $stmt_insert_notification->close();
                         } else {
-                            $errorMessage = "Failed to add notification";
+                            $errorMessage = "Course not found for notification";
                         }
-                        $stmt_insert_notification->close();
                     } else {
                         $errorMessage = "Question Added Failed";
                     }
@@ -119,7 +129,7 @@ if (isset($_GET['delete'])) {
 include_once("Footer.php");
 ?>
 
-<div class="container" style="padding:5%;">
+<div class="container" style="padding:6%;">
     <div class="col-sm-11 mt-5 jumbotron">
         <?php
         if (isset($_REQUEST['view'])) {

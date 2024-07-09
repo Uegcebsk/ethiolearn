@@ -2,10 +2,16 @@
 include_once("ProfileHeader.php");
 include_once("../DB_Files/db.php");
 ?>
-<div class="col-sm-9 mt-5 ms-5 border-0">
+<style>
+    .container {
+        padding:3%;
+    }
+</style>
+<div class="container" style="padding=5%;">
+<div class="col-sm-11 mt-5 ms-5 border-3">
 <h5 class="bg-dark card text-white p-2 text-center ">Old Result</h5>
 <?php
-                $sql = "SELECT * FROM exam_result WHERE email='$_SESSION[stu_email]'";
+                $sql = "SELECT * FROM quiz_result WHERE stu_id='$_SESSION[stu_id]'";
                 $result = $conn->query($sql);
                 echo '
 <table class="table table-borderless text-center text-light fw-bolder mt-5">
@@ -27,4 +33,5 @@ include_once("../DB_Files/db.php");
                 echo '</tbody>
 </table>';
 ?>
+</div>
 </div>

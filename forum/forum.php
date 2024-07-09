@@ -5,7 +5,7 @@ include_once("../Inc/Header.php");
 
 // Check if user is not logged in, redirect to login page
 if (!isset($_SESSION['stu_id'])) {
-    header("Location: /ethiolearn/Login&SignIn.php");
+    header("Location: /ethiolearn/Login.php");
     exit();
 }
 
@@ -34,29 +34,36 @@ $sql_questions = "SELECT Q_id, q.Q_stu_id, q.q_body, q.course_id, q.q_timestamp,
 FROM questions q 
 JOIN course c ON q.course_id = c.course_id 
 JOIN students s ON q.Q_stu_id = s.stu_id 
-$sql_condition";
+$sql_condition
+ORDER BY q.q_timestamp DESC";
 
 $result_questions = $conn->query($sql_questions);
 ?>
 
-.
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>QA Forum</title>
+    <link rel="stylesheet" href="/ethiolearn/bootstrap/css/bootstrap.min.css">
     <style>
-    
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Arial', sans-serif;
+            padding-right:10%;
+        }
 
         .container {
-            margin-top:0px;
+            margin-top: 7%;
+            max-width: 900px;
+            max-height: 900px;
         }
 
         .card {
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-bottom: 1rem;
-            max-width: 1000px;
-            margin-left: auto;
-            margin-right: auto;
+            background-color: #fff;
         }
 
         .card-body {
@@ -76,29 +83,37 @@ $result_questions = $conn->query($sql_questions);
             object-fit: cover;
         }
 
-        .btn-container{
-            margin-top: 20px;
+        .search-form {
             margin-bottom: 20px;
-            padding: 20px;
         }
-        
-        .show-answers {
+
+        .resolved {
+            border-left: 5px solid #28a745;
+        }
+
+        .offcanvas {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1045;
             display: block;
-            margin: 0 auto;
-            text-align: center;
+            width: 250px;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .offcanvas-body {
+            padding: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1 class="my-5">Hi, <b><?php echo $stu_name; ?></b>. Welcome to QA Forum.</h1>
-        <div class="btn-container">
-            <a href="expand-all.php" class="btn btn-warning">Main Forum</a>
-            <a href="post-question.php" class="btn btn-warning">Post Question</a>
-            <a href="my-questions.php" class="btn btn-warning">Your Questions</a>
-            <a href="my-answers.php" class="btn btn-warning">Your Answers</a>
-        </div>
+    <?php include("menu.php"); ?>
 
+    <div class="container">
+        <h1 class="my-5 text-center">Hi, <b><?php echo $stu_name; ?></b>. Welcome to QA Forum.</h1>
+        
         <form name="form1" method="POST" action="" class="search-form">
             <div class="form-row align-items-center">
                 <div class="col-md-6 mb-3">
@@ -123,7 +138,6 @@ $result_questions = $conn->query($sql_questions);
                     </select>
                 </div>
             </div>
-            <!-- Implement real-time search functionality -->
             <button type="submit" class="btn btn-primary" name="Submit1">Search</button>
         </form>
 
@@ -135,15 +149,16 @@ $result_questions = $conn->query($sql_questions);
                 echo '
                 <div class="card '.$resolved_class.'">
                     <div class="card-body">
-                        <p class="card-text"><a href="#" style="color: blue; font-weight: bold; ">' . $row["q_body"] .'?</a></p>
+                        <p class="card-text"><a href="#" class="font-weight-bold">' . $row["q_body"] .'</a></p>
                         <p class="card-text">Course Name: ' . $row["course_name"] . '</p>
                         <div class="d-flex align-items-center">
-                            <div class="rounded-circle overflow-hidden" style="width: 60px; height: 60px; margin-right: 20px;">
-                                <img src="' . $row["stu_img"] . '" alt="Student Image" class="img-fluid rounded-circle">
+                            <div class="rounded-circle overflow-hidden">
+                                <img src="' . $row["stu_img"] . '" alt="Student Image" class="img-fluid">
                             </div>
                             <div>
-                                <p class="mb-0 text-muted">' . $row["q_timestamp"] . '</p>
+                               
                                 <p class="mb-1"><strong>' . $row["stu_name"] . '</strong></p>
+                                <p class="mb-0 text-muted">' . $row["q_timestamp"] . '</p>
                             </div>
                         </div>
                         <!-- Show More button to load all answers -->
@@ -158,31 +173,32 @@ $result_questions = $conn->query($sql_questions);
         }
         ?>
     </div>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="/ethiolearn/Users/js/min.js"></script>
     <script>
     $(document).ready(function() {
-    // Function to load partial answers for a question
-    $(".show-answers").click(function() {
-        var qid = $(this).data("qid");
-        var containerId = "#answers-container-" + qid;
-        
-        // Toggle visibility of answers container
-        $(containerId).toggle();
-        
-        // If the container is visible, load answers
-        if ($(containerId).is(":visible")) {
-            $.ajax({
-                url: "load-answers.php",
-                method: "POST",
-                data: { Q_id: qid },
-                success: function(data) {
-                    $(containerId).html(data);
-                }
-            });
-        }
+        // Function to load partial answers for a question
+        $(".show-answers").click(function() {
+            var qid = $(this).data("qid");
+            var containerId = "#answers-container-" + qid;
+            
+            // Toggle visibility of answers container
+            $(containerId).toggle();
+            
+            // If the container is visible, load answers
+            if ($(containerId).is(":visible")) {
+                $.ajax({
+                    url: "load-answers.php",
+                    method: "POST",
+                    data: { Q_id: qid },
+                    success: function(data) {
+                        $(containerId).html(data);
+                    }
+                });
+            }
+        });
     });
-});
-</script>
+    </script>
 </body>
 </html>
 <?php

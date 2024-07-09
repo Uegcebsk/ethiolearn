@@ -19,35 +19,30 @@ $result_select_courses = $stmt_select_courses->get_result();
 $errorMessage = "";
 $successMessage = "";
 
-// Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate if all fields are filled
-    if (!empty($_POST['course_id']) && !empty($_POST['lesson_name']) && !empty($_POST['lesson_description'])) {
+    if (!empty($_POST['course_id']) && !empty($_POST['lesson_name']) && !empty($_POST['lesson_description']) && isset($_FILES['lesson_file'])) {
         $course_id = $_POST['course_id'];
         $lesson_name = $_POST['lesson_name']; 
         $lesson_description = $_POST['lesson_description'];
         
-        // Handle lesson link or file based on the selected upload type
-        if ($_POST['upload_type'] == 'youtube') {
-            $lesson_link = $_POST['lesson_link'];
-            $lesson_file = ''; // If it's a YouTube link, no file is uploaded
-        } else {
-            // Handle file upload securely
-            $lesson_file = $_FILES['lesson_file']['name'];
-            $lesson_file_temp = $_FILES['lesson_file']['tmp_name'];
-            $targetDir = "Videos/LessonVideos/";
-            $targetFile = $targetDir . basename($lesson_file);
-            $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+        // Handle file upload securely
+        $lesson_file = $_FILES['lesson_file']['name'];
+        $lesson_file_temp = $_FILES['lesson_file']['tmp_name'];
+        $targetDir = "Videos/LessonVideos/";
+        $targetFile = $targetDir . basename($lesson_file);
+        $fileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
 
-            // Check if file is a valid video format
-            $allowedFormats = array("mp4", "avi", "mov");
-            if (!in_array($fileType, $allowedFormats)) {
-                $errorMessage = "Only MP4, AVI, and MOV formats are allowed";
-            } elseif (move_uploaded_file($lesson_file_temp, $targetFile)) {
-                $lesson_link = 'Videos/LessonVideos/' . basename($lesson_file); // Store file path as link
-            } else {
-                $errorMessage = "File upload failed";
-            }
+        // Check if file is a valid video format
+        $allowedFormats = array("mp4", "avi", "mov");
+        if (!in_array($fileType, $allowedFormats)) {
+            $errorMessage = "Only MP4, AVI, and MOV formats are allowed";
+        } elseif ($_FILES['lesson_file']['size'] > 100000000) { // 100MB file size limit
+            $errorMessage = "File size is too large. Please upload a file smaller than 100MB.";
+        } elseif (move_uploaded_file($lesson_file_temp, $targetFile)) {
+            $lesson_link = 'Videos/LessonVideos/' . basename($lesson_file); // Store file path as link
+        } else {
+            $errorMessage = "File upload failed";
         }
 
         if (empty($errorMessage)) {
@@ -77,12 +72,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $notification_message = "New lesson added: $lesson_name";
                     $notification_date = date("Y-m-d H:i:s");
 
-                    $insert_notification_query = "INSERT INTO notifications (stu_id, material_id, notification_type, item_id, notification_message, notification_date, is_read) 
-                    SELECT co.stu_id, ?, ?, ?, ?, ?, 0 
+                    $insert_notification_query = "INSERT INTO notifications (stu_id, material_id, notification_type, item_id, notification_message, notification_date, is_read, course_id) 
+                    SELECT co.stu_id, ?, ?, ?, ?, ?, 0, ? 
                     FROM courseorder co 
                     WHERE co.course_id = ?";
                     $stmt_insert_notification = $conn->prepare($insert_notification_query);
-                    $stmt_insert_notification->bind_param("isissi", $lesson_id, $notification_type, $lesson_id, $notification_message, $notification_date, $course_id);
+                    $stmt_insert_notification->bind_param("isissii", $lesson_id, $notification_type, $lesson_id, $notification_message, $notification_date, $course_id, $course_id);
 
                     if ($stmt_insert_notification->execute()) {
                         $successMessage = "Lesson Added Successfully";
@@ -103,8 +98,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errorMessage = "All Fields Required";
     }
 }
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -112,75 +107,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add New Lesson</title>
-    <link rel="stylesheet" href="css/style.css"> <!-- Link to external CSS file -->
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
+    <link rel="stylesheet" href="/ethiolearn/instructor/css/addLesson.css"> 
 
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-        }
-
-        label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        select,
-        input[type="text"],
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        button {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .error {
-            color: #dc3545;
-            font-size: 14px;
-            margin-top: 5px;
-            display: <?php echo !empty($errorMessage) ? 'block' : 'none'; ?>;
-        }
-
-        .success {
-            color: #28a745;
-            font-size: 14px;
-            margin-top: 5px;
-            display: <?php echo !empty($successMessage) ? 'block' : 'none'; ?>;
-        }
-    </style>
+   
 </head>
 <body>
     <div class="container">
@@ -188,21 +117,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
             <div class="error"><?php echo $errorMessage; ?></div>
             <div class="success"><?php echo $successMessage; ?></div>
-            <label for="upload_type">Upload Type</label>
-            <select name="upload_type" id="upload_type">
-                <option value="youtube">YouTube Link</option>
-                <option value="file">Upload File</option>
-            </select>
-            <div id="youtube_link_input">
-                <label for="lesson_link">Lesson YouTube ID</label>
-                <input type="text" id="lesson_link" name="lesson_link">
-            </div>
-            <div id="file_upload_input" style="display:none;">
-                <label for="lesson_file">Upload Video File</label>
-                <input type="file" id="lesson_file" name="lesson_file">
-            </div>
+            <label for="file">Upload Video File (MP4, AVI, MOV):</label>
+            <input type="file" id="lesson_file" name="lesson_file" accept=".mp4,.avi,.mov" required>
             <label for="course_id">Select Course:</label>
-            <select name="course_id" id="course_id">
+            <select name="course_id" id="course_id" required>
                 <?php
                 while ($row = $result_select_courses->fetch_assoc()) {
                     echo '<option value="' . $row['course_id'] . '">' . $row['course_name'] . '</option>';
@@ -210,23 +128,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 ?>
             </select>
             <label for="lesson_name">Lesson Name:</label>
-            <input type="text" id="lesson_name" name="lesson_name">
+            <input type="text" id="lesson_name" name="lesson_name" required>
             <label for="lesson_description">Lesson Description:</label>
-            <textarea id="lesson_description" name="lesson_description" rows="4"></textarea>
+            <textarea id="lesson_description" name="lesson_description" rows="4" required></textarea>
             <button type="submit" name="lessonSubmitBtn">Submit</button>
-</form>
-</div>
-<script>
-    document.getElementById('upload_type').addEventListener('change', function() {
-        var value = this.value;
-        var linkInput = document.getElementById('youtube_link_input');
-        var fileInput = document.getElementById('file_upload_input');
-        if (value === 'youtube') {
-            linkInput.style.display = 'block';
-            fileInput.style.display = 'none';
-        } else {
-            linkInput.style.display = 'none';
-            fileInput.style.display = 'block';
-        }
-    });
-</script>
+        </form>
+    </div>
+</body>
+</html>

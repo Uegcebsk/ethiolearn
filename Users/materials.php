@@ -1,30 +1,9 @@
 <?php
-session_start();
-include_once("ProfileHeader.php");
 include_once("../DB_Files/db.php");
-// Check if the "View Description" button is clicked
-if(isset($_POST['view_description'])) {
-    // Retrieve the material ID from the form
-    $material_id = $_POST['material_id'];
-    
-    // Retrieve the material details from the database based on the material ID
-    $sql_select_material = "SELECT * FROM materials WHERE material_id = ?";
-    $stmt_select_material = $conn->prepare($sql_select_material);
-    $stmt_select_material->bind_param("i", $material_id);
-    $stmt_select_material->execute();
-    $result_select_material = $stmt_select_material->get_result();
-    
-    if($result_select_material->num_rows > 0) {
-        $material = $result_select_material->fetch_assoc();
-        // Display the material description
-        echo '<div class="material-description">';
-        echo '<h3>Material Description</h3>';
-        echo '<p>' . $material['material_desc'] . '</p>';
-        echo '</div>';
-    } else {
-        echo '<p>Material not found.</p>';
-    }
-}
+include_once("ProfileHeader.php");
+// Validate and sanitize course_id
+$course_id = isset($_GET['course_id']) ? intval($_GET['course_id']) : 0;
+
 ?>
 
 <!DOCTYPE html>
@@ -35,23 +14,39 @@ if(isset($_POST['view_description'])) {
     <title>Materials</title>
     <link rel="stylesheet" href="CSS/watchcourse.css">
     <style>
-        /* Additional CSS styles for responsiveness and appearance */
-        .material-description {
-            padding: 50px;
-            background-color: #f8f9fa;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-top: 20px;
+        /* Additional CSS styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
         }
-        .material-description h3 {
-            color: #333;
-            font-size: 20px;
-            margin-bottom: 10px;
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 40px;
+            border: 1px solid #888;
+            width: 60%;
         }
-        .material-description p {
-            color: #666;
-            font-size: 16px;
-            line-height: 1.6;
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -59,13 +54,15 @@ if(isset($_POST['view_description'])) {
 
 <div class="container">
     <div class="row justify-content-center">
-    <div class="col-sm-9 mt-5 m-auto">
-        <p class="bg-dark text-white p-2">List of Materials</p>
-        <?php
-        if (isset($_GET['course_id'])) {
-            $course_id = $_GET['course_id'];
-            $sql = "SELECT * FROM materials WHERE course_id='$course_id'";
-            $result = $conn->query($sql);
+        <div class="col-sm-9 mt-5 m-auto">
+            <p class="bg-dark text-white p-2">List of Materials</p>
+            <?php
+            $sql = "SELECT * FROM materials WHERE course_id=?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $course_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
             if ($result->num_rows > 0) {
                 ?>
                 <table class="table">
@@ -79,41 +76,71 @@ if(isset($_POST['view_description'])) {
                     <tbody>
                     <?php while ($row = $result->fetch_assoc()) { ?>
                         <tr>
-                            <td class="text-dark fw-bolder"><?php echo $row['material_name']; ?></td>
-                            <td class="text-dark fw-bolder"><?php echo $row['material_type']; ?></td>
+                            <td class="text-dark fw-bolder"><?php echo htmlspecialchars($row['material_name']); ?></td>
+                            <td class="text-dark fw-bolder"><?php echo htmlspecialchars($row['material_type']); ?></td>
                             <td>
-    <td>
-    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" class="d-inline">
-        <input type="hidden" name="material_id" value="<?php echo $row['material_id']; ?>">
-        <button type="submit" class="btn btn-info mr-3" name="view_description" value="View Description">View Description</button>
-        <?php
-        // Construct the file path without the duplicated "material" directory
-        $file_path = "../instructor/material/" . $row['material_url'];
-        if (file_exists($file_path)) {
-            // If the file exists, display the download link
-            echo '<a href="' . $file_path . '" download="' . $row['material_name'] . '" class="btn btn-success">Download</a>';
-        } else {
-            // If the file does not exist, display an error message
-            echo '<span class="text-danger">File not found</span>';
-        }
-        ?>
-    </form>
-</td>
-
-
+                                <button class="btn btn-info mr-3 view-description" data-material-id="<?php echo $row['material_id']; ?>">View Description</button>
+                                <a href="download_material.php?material_id=<?php echo $row['material_id']; ?>" class="btn btn-success">Download</a>
+                            </td>
                         </tr>
                     <?php } ?>
                     </tbody>
                 </table>
             <?php } else {
                 echo "<p class='text-dark p-2 fw-bolder'>Materials Not Found. </p>";
-            }
-        } ?>
+            } ?>
+        </div>
     </div>
-    <div style="align:center;" class="text-dark p-2 fw-bolder">
+    <div style="text-align:center;" class="text-dark p-2 fw-bolder">
         <a href="MyCourse.php" class="btn btn-info mr-3">Back to My Course</a>
     </div>
 </div>
+
+<!-- Modal for displaying material description -->
+<div id="descriptionModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Material Description</h2>
+        <div id="descriptionContent"></div>
+    </div>
+</div>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById("descriptionModal");
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on the button, open the modal
+    var buttons = document.getElementsByClassName("view-description");
+    Array.from(buttons).forEach(button => {
+        button.addEventListener("click", function() {
+            var materialId = this.getAttribute("data-material-id");
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    document.getElementById("descriptionContent").innerHTML = this.responseText;
+                    modal.style.display = "block";
+                }
+            };
+            xhr.open("GET", "material_detail.php?material_id=" + materialId, true);
+            xhr.send();
+        });
+    });
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        modal.style.display = "none";
+    };
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    };
+</script>
 
 </body>
 </html>

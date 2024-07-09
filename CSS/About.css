@@ -9,8 +9,9 @@
     display: grid;
     margin-top: 5rem;
     grid-template-columns: 40% 60%;
-    gap: 5rem;
+    gap: 0rem;
     background: var(--color-bg);
+    color: goldenrod
 }
 
 .about__achievements-right>p {
@@ -21,7 +22,7 @@
 .achievements__cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
+    gap: 0rem;
 }
 
 .achievements__card {

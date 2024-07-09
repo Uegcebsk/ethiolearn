@@ -1,0 +1,160 @@
+.wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image: linear-gradient(35deg, #f5d020 10%, #d7502b 94%);
+        }
+        .container--forgot {
+            background-color: #dadede;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0.9rem 1.7rem rgba(0, 0, 0, 0.25), 0 0.7rem 0.7rem rgba(0, 0, 0, 0.22);
+            width: 100%;
+            height: 450px; /* Increased height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .container--reset {
+            background-color: #dadede;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0.9rem 1.7rem rgba(0, 0, 0, 0.25), 0 0.7rem 0.7rem rgba(0, 0, 0, 0.22);
+            width: 100%;
+            height: 450px; /* Increased height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .container__form_containerverify{
+            background-color: #dadede;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0.9rem 1.7rem rgba(0, 0, 0, 0.25), 0 0.7rem 0.7rem rgba(0, 0, 0, 0.22);
+            width: 100%;
+            height: 450px; /* Increased height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .success {
+            color: #008000;
+            margin-bottom: 10px;
+        }
+        .alert {
+            color: #ff0000;
+            margin-bottom: 10px;
+        }
+        .form__field {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+        .form__field:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+        .form__label {
+            position: absolute;
+            top: 12px;
+            left: 10px;
+            color: #999;
+            font-size: 16px;
+            transition: transform 0.3s ease, font-size 0.3s ease, color 0.3s ease;
+        }
+        .form__field:focus + .form__label,
+        .form__field:not(:placeholder-shown) + .form__label {
+            transform: translateY(-25px) scale(0.85);
+            font-size: 13px;
+            color: #007bff;
+        }
+       
+.cta {
+    border: 0;
+    position: relative;
+    background: transparent;
+    /* margin: auto; */
+    font-family: 'Smooch Sans', sans-serif;
+    padding: 19px 22px;
+    color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.cta:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: block;
+    border-radius: 28px;
+    /* background: rgba(255, 171, 157, 0.5); */
+    background-image: linear-gradient(315deg, #ffc041 0%, #ec9f05 74%);
+    width: 56px;
+    height: 56px;
+    transition: all 0.3s ease;
+}
+
+.cta span {
+    position: relative;
+    font-size: 16px;
+    line-height: 18px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    vertical-align: middle;
+}
+
+.cta svg {
+    position: relative;
+    top: 0;
+    margin-left: 10px;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke: rgb(255, 255, 255);
+    stroke-width: 2;
+    transform: translateX(-5px);
+    transition: all 0.3s ease;
+}
+
+.cta:hover:before {
+    width: 100%;
+    /* background: #ffab9d; */
+    background-color: #ec9f05;
+}
+
+.cta:hover svg {
+    transform: translateX(0);
+}
+
+.cta:active {
+    transform: scale(0.96);
+}
+
+.cssbtn {
+    margin-left: 120px;
+    margin-top: 250px;
+}
+
+.cssbtn1 {
+    margin-left: 250px;
+    margin-top: 250px;
+}
+
+        
+        .form__title {
+    margin: 10px;
+    font-weight: 900;
+    font-size: 35px;
+    margin-bottom: 3rem;
+    font-weight: 900;
+    font-family: 'Smooch Sans', sans-serif;
+    color: #d7502b;
+}

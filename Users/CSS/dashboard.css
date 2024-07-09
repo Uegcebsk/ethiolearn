@@ -1,0 +1,77 @@
+
+    .container {
+        padding-left: 10%;
+        margin-top: 5%;
+    }
+
+    .course-section {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+
+    .card {
+        flex: 0 0 calc(30% - 20px); /* Three cards per row, with margins */
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-title {
+        margin-bottom: 10px;
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .card-text {
+        margin-bottom: 15px;
+        color:black;
+    }
+
+    .btn {
+        color: yellow !important;
+        background-color: #007bff;
+        border-color: orange;
+        border-radius: 5px;
+        padding: 8px 16px;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+
+   
+    
+    .chart-container {
+        width: 100%;
+        overflow-x: auto;
+        padding: 20px 0;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+    }
+
+    .chart-container:hover {
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .chart-canvas {
+        min-width: 500px; /* Set a minimum width for the chart */
+    }

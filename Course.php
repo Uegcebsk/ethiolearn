@@ -3,88 +3,99 @@ include_once("Inc/Header.php");
 include_once("DB_Files/db.php");
 ?>
 
-<link rel="stylesheet" href="CSS/Course.css">
 <link rel="stylesheet" href="CSS/responsiveness.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<link rel="stylesheet" href="CSS/filter.css"> 
+<script src="/ethiolearn/js/jquery-3.3.1.min.js"></script>
+<style>
+  /* CSS for Filter Section */
 
-<section class="courses">
-    <h2>All Courses</h2>
-    <div class="col">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" id="search_text" name="search_text" placeholder="Search Here">
+</style>
+
+<section class="coursess">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="filter-container">
+                    <div class="filter-header">
+                        <h3>Filter</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="search_text" name="search_text" placeholder="Search Here">
+                        </div>
+                        <div class="categories">
+                            <h4>Categories</h4>
+                            <ul>
+                                <?php
+                                // Fetch categories from the database
+                                $sql_categories = "SELECT * FROM categories";
+                                $result_categories = $conn->query($sql_categories);
+                                if ($result_categories->num_rows > 0) {
+                                    while ($row_category = $result_categories->fetch_assoc()) {
+                                        echo '<li class="category" data-category-id="' . $row_category['id'] . '">' . $row_category['catagorie_name'] . '</li>';
+                                    }
+                                }
+                                ?>
+                            </ul>
+                        </div>
+                        <div class="filter-options">
+                            <h4>Filter Options</h4>
+                            <label><input type="checkbox" id="free_courses"> Free Courses</label>
+                            <label><input type="checkbox" id="paid_courses"> Paid Courses</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <h2>All Courses</h2>
+
+                <div id="courses-container" class="container courses__container">
+                    <!-- Courses will be dynamically loaded here -->
+                </div>
+            </div>
         </div>
-        <br><br><br><br>
-        <div id="result"></div>
-        <br><br><br><br><br><br><br>
-    </div>
-
-    <div class="container courses__container">
-        <?php
-        $sql = "SELECT c.*, l.l_name FROM course c JOIN lectures l ON c.lec_id = l.l_id";
-        $result = $conn->query($sql);
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $course_id = $row['course_id'];
-                $_SESSION["course_id"] = $course_id;
-                echo '
-                <article class="course">
-                    <a href="CourseDetails.php?course_id=' . $course_id . '">
-                        <div class="course__image">
-                            <img src="'.str_replace('..','.',$row['course_img']).'" alt="">
-                        </div>
-                        <div class="course__info">
-                            <h3 style="text-align: start;">' . $row['course_name'] . '</h3>
-                            <h5 style="text-align: start; margin-top: 10px;">' . $row['l_name'] . '</h5>
-                            <h4 style="text-align: start; margin-top: 10px;">&#36;' . $row['course_price'] . '</h4>
-                            <br>
-                            <a href="CourseDetails.php?course_id=' . $course_id . '">
-                                <button class="button">Learn More</button>
-                            </a>
-                        </div>
-                    </a>
-                </article>';
-            }
-        }
-        ?>
     </div>
 </section>
 
 <script>
-    // Animation Scroll
-    function reveal() {
-        var reveals = document.querySelectorAll(".reveal");
-        for (var i = 0; i < reveals.length; i++) {
-            var windowHeight = window.innerHeight;
-            var elementTop = reveals[i].getBoundingClientRect().top;
-            var elementVisible = 150;
-            if (elementTop < windowHeight - elementVisible) {
-                reveals[i].classList.add("active");
-            } else {
-                reveals[i].classList.remove("active");
-            }
-        }
-    }
-    window.addEventListener("scroll", reveal);
-</script>
-
-<script>
     $(document).ready(function () {
+        // Load courses on page load
+        fetchCourses();
+
+        // Fetch courses when a category is clicked
+        $(".category").click(function () {
+            var categoryId = $(this).data("category-id");
+            fetchCourses(categoryId);
+        });
+
+        // Fetch courses based on category, search text, and filters
+        function fetchCourses(categoryId = '') {
+            var freeCourses = $("#free_courses").prop("checked") ? 1 : 0;
+            var paidCourses = $("#paid_courses").prop("checked") ? 1 : 0;
+            $.ajax({
+                url: "course_fetch.php",
+                type: "post",
+                data: {
+                    category_id: categoryId,
+                    search: $("#search_text").val(),
+                    free_courses: freeCourses,
+                    paid_courses: paidCourses
+                },
+                dataType: "html",
+                success: function (data) {
+                    $("#courses-container").html(data);
+                }
+            });
+        }
+
+        // Search courses when text is typed
         $('#search_text').keyup(function () {
-            var txt = $(this).val();
-            if (txt != '') {
-                $('#result').html('');
-                $.ajax({
-                    url: "course_fetch.php",
-                    type: "post",
-                    data: {
-                        search: txt
-                    },
-                    dataType: "text",
-                    success: function (data) {
-                        $('#result').html(data);
-                    }
-                });
-            } else {}
+            fetchCourses();
+        });
+
+        // Fetch courses when filter checkboxes are clicked
+        $("#free_courses, #paid_courses").change(function () {
+            fetchCourses();
         });
     });
 </script>

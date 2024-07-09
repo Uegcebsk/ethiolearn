@@ -42,7 +42,7 @@ if(isset($_REQUEST['view'])){
         <div class="c-name">
             <h3><?php echo $row['course_name'] ?></h3>
         </div>
-        <span class="price">&#36;<?php echo $row['course_price'] ?></span>
+        <span class="price"><?php echo $row['course_price'] ?> Birr</span>
     </div>
     <?php
     // Fetching instructor name based on lec_id
@@ -80,6 +80,7 @@ if(isset($_REQUEST['view'])){
                 echo '
                 <form action="" method="POST" class="d-inline">
                 <input type="hidden" name="id" value="' . $row["course_price"] . '">
+                
                 <button type="submit" class="button" name="view">Enroll Now</button>
                 </form>
                     ';
@@ -135,6 +136,10 @@ if(isset($_REQUEST['view'])){
     td {
         text-align: center;
         padding: 10px;
+    }
+    th{
+        text-align: center;
+        padding: 10px; 
     }
 </style>
 <?php

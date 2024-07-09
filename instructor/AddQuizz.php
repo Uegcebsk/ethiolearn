@@ -34,7 +34,7 @@ function displayMessage($msg, $type = 'success')
                     $sql = "SELECT ec.id, ec.exam_name, ec.assessment_type, ec.exam_time 
                             FROM exam_category ec
                             INNER JOIN course c ON ec.course_id = c.course_id
-                            WHERE c.lec_id = '$instructorId'";
+                            WHERE c.lec_id = '$instructorId' AND ec.assessment_type = 'quiz'";
                     $result = $conn->query($sql);
                     if ($result->num_rows > 0) {
                     ?>

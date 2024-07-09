@@ -4,8 +4,8 @@ include_once("Header.php");
 include_once("../DB_Files/db.php");
 ?>
 
-
-<div class="col-sm-6 mt-5 jumbotron">
+<div class="container" style="padding: 6%;">
+<div class="col-sm-12 mt-5 jumbotron">
     <h3 class="text-center">View Payment Status</h3>
     <?php
     if (isset($_REQUEST['view'])) {

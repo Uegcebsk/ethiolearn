@@ -1,0 +1,124 @@
+ body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4; /* Light background color */
+        }
+
+        nav {
+            background-color: green; /* Dark green */
+            color: white;
+            padding: 0px;
+            position: fixed;
+            top: 0; /* Fix the navigation bar at the top */
+            width: 100%;
+            z-index: 1000; /* Ensure the nav stays on top */
+            transition: top 0.3s; /* Smooth transition on scroll */
+        }
+
+        .containerr {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1300px;
+            margin: 10 auto;
+            padding: 0 20px;
+            margin-top: 33px;
+        }
+
+        .title {
+            margin: 0;
+            font-size: 28px; /* Increased font size */
+            font-weight: bold;
+        }
+
+        .nav__menu {
+            display: flex;
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav__menu li {
+            margin-right: 20px;
+        }
+
+        .custom__links {
+            color: gold;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 25px; /* Increased font size */
+        }
+
+        .custom__links:hover {
+            color: #FFD700; /* Gold on hover */
+        }
+
+        /* Mobile menu */
+        #open-menu-btn,
+        #close-menu-btn {
+            display: none;
+        }
+
+        .toggle-icon {
+            font-size: 24px; /* Icon font size */
+            color: white; /* Icon color */
+        }
+
+        /* Google Translate Styling */
+        .google-translate-container {
+            display: inline-block;
+            margin-right: 20px;
+        }
+
+        .goog-te-banner-frame.skiptranslate {
+            display: none !important;
+        }
+
+        .goog-te-gadget-icon {
+            display: none;
+        }
+
+        .goog-te-combo {
+            border-radius: 5px;
+            background-color: #fff;
+            border: none;
+            padding: 5px 10px;
+            font-size: 16px;
+            color: #555;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .goog-te-combo-arrow {
+            display: none;
+        }
+
+        @media screen and (max-width: 768px) {
+            nav {
+                padding: 10px;
+            }
+
+            .nav__menu {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 55px;
+                left: 0;
+                background-color: #333; /* Dark background for menu */
+                width: 100%;
+                padding: 10px 0;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                z-index: 999; /* Ensure menu is on top of other content */
+            }
+
+            .nav__menu.active {
+                display: flex;
+            }
+
+            #open-menu-btn {
+                display: inline-block;
+            }
+        }
+        
+        

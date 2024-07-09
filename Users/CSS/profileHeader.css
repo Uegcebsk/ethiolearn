@@ -1,40 +1,111 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic&display=swap');
-.navbar-brand {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #ffffff;
-}
-
 body {
-    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    background: #f7f9fa;
+    color: #333;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
 }
-
-
-/* plus button add */
-
-.box {
-    position: fixed;
-    bottom: 10px;
-    right: 20px;
-    margin-bottom: 30px;
+.navbar {
+    background-color: #363636;
 }
-
-i {
+.navbar-brand {
     font-size: 1.5rem;
+    color: #fff;
+    font-weight: bold;
+}
+.navbar-toggler {
+    border: none;
+}
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 1000;
+    width: 250px; /* Adjust the width as needed */
+    background-color: #363636;
+    padding-top: 65px;
+    overflow-y: auto;
+    transition: left 0.3s ease;
+}
+.sidebar-sticky {
+    padding-bottom: 20px;
+}
+.nav-link {
+    color: #fff;
+}
+.content-container {
+    padding-top: 70px;
+    padding-left: 270px; /* Adjust this value to match the width of the sidebar */
+    text-align: center; /* Center align content */
+}
+.notification-icon {
+    position: relative;
+    display: inline-block;
+}
+.notification-icon .badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    padding: 5px 8px;
+    border-radius: 50%;
+    background-color: #dc3545;
+    color: #fff;
+    font-size: 0.8rem;
+}
+.notification-text {
+    margin-top: 5px;
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+.fullscreen {
+    overflow: hidden;
+}
+@media (max-width: 768px) {
+    .sidebar {
+        left: -250px;
+    }
+    .content-container {
+        padding-left: 20px;
+    }
+    .fullscreen {
+        overflow: auto;
+    }
+}
+.notification-icon {
+display: flex;
+align-items: center;
+color: #fff;
+text-decoration: none;
 }
 
-small {
-    font-size: 1.2rem;
+.notification-text {
+margin-right: 10px;
 }
 
-::-webkit-scrollbar {
-    display: none;
+.notification-icon img {
+width: 30px;
+height: auto;
 }
 
-textarea {
-    resize: none;
+.badge {
+position: relative;
+top: -15px;
+right: -25px;
+padding: 5px 8px;
+border-radius: 50%;
+background-color: #dc3545;
+color: #fff;
+font-size: 0.8rem;
 }
 
-p {
-    color: black;
+@media (max-width: 768px) {
+.sidebar {
+left: -250px;
+}
+.content-container {
+padding-left: 20px;
+}
+.fullscreen {
+overflow: auto;
+}
 }

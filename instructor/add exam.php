@@ -6,9 +6,6 @@ include_once("../DB_Files/db.php");
 $errorMessage = "";
 $successMessage = "";
 
-// Retrieve the exam_name from the form submission
-$exam_name = isset($_POST['name']) ? $_POST['name'] : '';
-
 // Define the question types and their corresponding IDs
 $questionTypes = array(
     1 => 'Choose',
@@ -16,193 +13,221 @@ $questionTypes = array(
     3 => 'Fill in the Blank'
 );
 
-// Retrieve the number of questions and their types
-$numQuestions = isset($_POST['num_questions']) ? (int)$_POST['num_questions'] : 0;
-$questionTypesSelected = isset($_POST['question_types']) ? $_POST['question_types'] : array();
-
-// Set minimum and maximum input lengths for questions and answers
-$minQuestionLength = 5;
-$maxQuestionLength = 255;
-$minAnswerLength = 1;
-$maxAnswerLength = 100;
-
-// Define HTML form fields based on the number and types of questions
-$formFields = '';
-for ($i = 0; $i < $numQuestions; $i++) {
-    $formFields .= '<div class="form-group">';
-    $formFields .= '<label for="question' . ($i + 1) . '">Question ' . ($i + 1) . '</label>';
-    $formFields .= '<input type="text" id="question' . ($i + 1) . '" name="questions[]" class="form-control">';
-    $formFields .= '</div>';
-
-    $formFields .= '<div class="form-group">';
-    $formFields .= '<label for="answer' . ($i + 1) . '">Correct Answer ' . ($i + 1) . '</label>';
-    if (in_array(1, $questionTypesSelected)) {
-        // Choose question type
-        $formFields .= '<input type="text" id="answer' . ($i + 1) . '" name="answers_choose[]" class="form-control">';
-        // Additional option fields for Choose questions
-        for ($j = 1; $j <= 4; $j++) {
-            $formFields .= '<input type="text" id="option' . ($i + 1) . '_' . $j . '" name="options_choose[' . $i . '][]" class="form-control" placeholder="Option ' . $j . '">';
+// Fetch exam name from $_REQUEST if available
+$exam_name = "";
+if (isset($_REQUEST['view'])) {
+    if (isset($_REQUEST['id']) && !empty($_REQUEST['id'])) {
+        $id = $_REQUEST['id'];
+        $sql = "SELECT * FROM exam_category WHERE id=$id";
+        $result = $conn->query($sql);
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $exam_name = $row['exam_name'];
         }
-    } elseif (in_array(2, $questionTypesSelected)) {
-        // True/False question type
-        $formFields .= '<select id="answer' . ($i + 1) . '" name="answers_true_false[]" class="form-control">';
-        $formFields .= '<option value="True">True</option>';
-        $formFields .= '<option value="False">False</option>';
-        $formFields .= '</select>';
-    } elseif (in_array(3, $questionTypesSelected)) {
-        // Fill in the Blank question type
-        $formFields .= '<input type="text" id="answer' . ($i + 1) . '" name="answers_fill[]" class="form-control">';
-    }
-    $formFields .= '</div>';
-}
-
-if (isset($_POST['quesSubmitBtn'])) {
-    // Validate if all fields are filled
-    if (empty($_POST['questions'])) {
-        $errorMessage = '<div class="alert alert-warning col-sm-6 ml-5 mt-2">All Questions Required</div>';
     } else {
-        $questions = $_POST['questions'];
-        $answers_choose = isset($_POST['answers_choose']) ? $_POST['answers_choose'] : array();
-        $answers_true_false = isset($_POST['answers_true_false']) ? $_POST['answers_true_false'] : array();
-        $answers_fill = isset($_POST['answers_fill']) ? $_POST['answers_fill'] : array();
-        $options_choose = isset($_POST['options_choose']) ? $_POST['options_choose'] : array();
+        // Handle case when id is not set or empty
+        $errorMessage = "Invalid exam category ID.";
+    }
+}
 
-        // Validate each question and answer
-        foreach ($questions as $key => $question) {
-            // Check if question is empty
-            if (empty($question)) {
-                $errorMessage = '<div class="alert alert-warning col-sm-6 ml-5 mt-2">Question ' . ($key + 1) . ' is empty</div>';
-                break;
-            }
-            // Check question length
-            if (strlen($question) < $minQuestionLength || strlen($question) > $maxQuestionLength) {
-                $errorMessage = '<div class="alert alert-warning col-sm-6 ml-5 mt-2">Question ' . ($key + 1) . ' must be between ' . $minQuestionLength . ' and ' . $maxQuestionLength . ' characters</div>';
-                break;
-            }
-            // Check answer lengths for Choose questions
-            if (in_array(1, $questionTypesSelected) && isset($answers_choose[$key]) && (strlen($answers_choose[$key]) < $minAnswerLength || strlen($answers_choose[$key]) > $maxAnswerLength)) {
-                $errorMessage = '<div class="alert alert-warning col-sm-6 ml-5 mt-2">Answer for question ' . ($key + 1) . ' must be between ' . $minAnswerLength . ' and ' . $maxAnswerLength . ' characters</div>';
-                break;
-            }
-            // Check answer lengths for Fill in the Blank questions
-            if (in_array(3, $questionTypesSelected) && isset($answers_fill[$key]) && (strlen($answers_fill[$key]) < $minAnswerLength || strlen($answers_fill[$key]) > $maxAnswerLength)) {
-                $errorMessage = '<div class="alert alert-warning col-sm-6 ml-5 mt-2">Answer for question ' . ($key + 1) . ' must be between ' . $minAnswerLength . ' and ' . $maxAnswerLength . ' characters</div>';
-                break;
-            }
-        }
+// Handle form submission for generating form fields
+$formFields = '';
+$selectedQuestionTypes = [];
+if (isset($_POST['generateFormBtn']) || isset($_GET['questions'])) {
+    // Retrieve the exam_name from the form submission or URL parameters
+    $exam_name = isset($_POST['name']) ? $_POST['name'] : (isset($_GET['exam_category']) ? $_GET['exam_category'] : '');
 
-        // If no errors, insert questions into the database
-        if (empty($errorMessage)) {
-            // Insert the questions into the database
-            // Use prepared statements to prevent SQL injection
-            $insertQuestionStmt = $conn->prepare("INSERT INTO exam_questions (category_id, question_text, correct_answer, opt1, opt2, opt3, opt4, question_type) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    // Retrieve the number of questions and their types
+    $selectedQuestionTypes = isset($_POST['question_types']) ? $_POST['question_types'] : (isset($_GET['selected_question_types']) ? explode(',', $_GET['selected_question_types']) : []);
 
-            foreach ($questions as $key => $question) {
-                $questionType = $questionTypesSelected[$key];
-                $correctAnswer = '';
-            
-                // Retrieve correct answer based on question type
-                switch ($questionType) {
-                    case 1: // Choose question type
-                        $correctAnswer = isset($answers_choose[$key]) ? $answers_choose[$key] : '';
-                        break;
-                    case 2: // True/False question type
-                        $correctAnswer = isset($answers_true_false[$key]) ? $answers_true_false[$key] : '';
-                        break;
-                    case 3: // Fill in the Blank question type
-                        $correctAnswer = isset($answers_fill[$key]) ? $answers_fill[$key] : '';
-                        break;
-                    default:
-                        break;
+    // Check if at least one question type is selected
+    if (empty($selectedQuestionTypes)) {
+        $errorMessage = '<div class="alert alert-danger col-sm-6 ml-5 mt-2">Please select at least one question type.</div>';
+    } else {
+        // Set minimum and maximum input lengths for questions and answers
+        $minQuestionLength = 5;
+        $maxQuestionLength = 255;
+        $minAnswerLength = 1;
+        $maxAnswerLength = 100;
+
+        // Retrieve questions and options from URL parameters if available
+        $questions = isset($_GET['questions']) ? explode(',', $_GET['questions']) : [];
+        $options_choose = isset($_GET['options_choose']) ? json_decode($_GET['options_choose'], true) : [];
+        $correct_answers = isset($_GET['correct_answers']) ? explode(',', $_GET['correct_answers']) : [];
+        $true_false_answers = isset($_GET['true_false_answers']) ? explode(',', $_GET['true_false_answers']) : [];
+        $fill_blank_answers = isset($_GET['fill_blank_answers']) ? explode(',', $_GET['fill_blank_answers']) : [];
+
+        // Define HTML form fields based on the number and types of questions
+        foreach ($selectedQuestionTypes as $i => $type) {
+            $formFields .= '<div class="form-group">';
+            $formFields .= '<label for="question' . ($i + 1) . '">Question ' . ($i + 1) . '</label>';
+            $formFields .= '<input type="text" id="question' . ($i + 1) . '" name="questions[]" class="form-control" maxlength="' . $maxQuestionLength . '" value="' . (isset($questions[$i]) ? htmlspecialchars($questions[$i]) : '') . '">';
+            $formFields .= '</div>';
+
+            // Additional options for Choose questions
+            if ($type == 1) {
+                $formFields .= '<div class="form-group">';
+                for ($j = 1; $j <= 4; $j++) {
+                    $formFields .= '<label for="option' . ($i + 1) . '_' . $j . '">Option ' . $j . '</label>';
+                    $formFields .= '<input type="text" id="option' . ($i + 1) . '_' . $j . '" name="options_choose[' . $i . '][]" class="form-control" maxlength="' . $maxAnswerLength . '" value="' . (isset($options_choose[$i][$j - 1]) ? htmlspecialchars($options_choose[$i][$j - 1]) : '') . '">';
                 }
-            
-                // Bind parameters and execute query
-                $option1 = isset($options_choose[$key][0]) ? $options_choose[$key][0] : '';
-                $option2 = isset($options_choose[$key][1]) ? $options_choose[$key][1] : '';
-                $option3 = isset($options_choose[$key][2]) ? $options_choose[$key][2] : '';
-                $option4 = isset($options_choose[$key][3]) ? $options_choose[$key][3] : '';
-            
-                $insertQuestionStmt->bind_param("sssssssi", $exam_name, $question, $correctAnswer, $option1, $option2, $option3, $option4, $questionType);
-                $insertQuestionStmt->execute();
-            }
-            
+                $formFields .= '</div>';
 
-            $insertQuestionStmt->close();
-            $successMessage = '<div class="alert alert-success col-sm-6 ml-5 mt-2">Questions added successfully</div>';
+                // Text input field for the correct answer
+                $formFields .= '<div class="form-group">';
+                $formFields .= '<label for="correct_answer' . ($i + 1) . '">Correct Answer ' . ($i + 1) . '</label>';
+                $formFields .= '<input type="text" id="correct_answer' . ($i + 1) . '" name="correct_answers[]" class="form-control" placeholder="Enter Correct Answer" maxlength="' . $maxAnswerLength . '" value="' . (isset($correct_answers[$i]) ? htmlspecialchars($correct_answers[$i]) : '') . '">';
+                $formFields .= '</div>';
+            }
+
+            // True/False question type
+            if ($type == 2) {
+                $formFields .= '<div class="form-group">';
+                $formFields .= '<label for="true_false' . ($i + 1) . '">True/False ' . ($i + 1) . '</label>';
+                $formFields .= '<select id="true_false' . ($i + 1) . '" name="true_false_answers[]" class="form-control">';
+                $formFields .= '<option value="1"' . (isset($true_false_answers[$i]) && $true_false_answers[$i] == "1" ? ' selected' : '') . '>True</option>';
+                $formFields .= '<option value="0"' . (isset($true_false_answers[$i]) && $true_false_answers[$i] == "0" ? ' selected' : '') . '>False</option>';
+                $formFields .= '</select>';
+                $formFields .= '</div>';
+            }
+
+            // Input field for Fill in the Blank questions
+            if ($type == 3) {
+                $formFields .= '<div class="form-group">';
+                $formFields .= '<label for="fill_blank' . ($i + 1) . '">Fill in the Blank ' . ($i + 1) . '</label>';
+                $formFields .= '<input type="text" id="fill_blank' . ($i + 1) . '" name="fill_blank_answers[]" class="form-control" placeholder="Enter Correct Answer" maxlength="' . $maxAnswerLength . '" value="' . (isset($fill_blank_answers[$i]) ? htmlspecialchars($fill_blank_answers[$i]) : '') . '">';
+                $formFields .= '</div>';
+            }
         }
     }
 }
-?>
 
-<?php
+// Display error message if present
+if (isset($_GET['error'])) {
+    $errorMessage = '<div class="alert alert-danger col-sm-6 ml-5 mt-2">' . htmlspecialchars($_GET['error']) . '</div>';
+}
+
+// Include the footer
 include_once("Footer.php");
 ?>
 
-<div class="container" style="padding:5%;">
+<!-- HTML form for generating form fields -->
+<div class="container" style="padding:6%;">
     <div class="col-sm-11 mt-5 jumbotron">
-        <h3 class="text-center">Add Exam Questions</h3>
-        <form id="addQuestionForm" method="POST" enctype="multipart/form-data">
+        <h3 class="text-center">Generate Exam Questions</h3>
+        <form id="generateForm" method="POST" enctype="multipart/form-data">
             <br>
             <div class="form-group">
-                <label for="name">Exam Category</label>
-                <input type="text" id="name" name="name" value="<?php echo $exam_name; ?>" class="form-control fw-bold bg-transparent border-0 text-dark" readonly>
-            </div>
-            <br>
-            <div class="form-group">
-                <label for="num_questions">Number of Questions</label>
-                <input type="number" id="num_questions" name="num_questions" class="form-control" min="1" required>
+                <input type="hidden" name="exam_category" value="<?php echo htmlspecialchars($exam_name); ?>">
+                <label for="course_name">Exam Category</label>
+                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($exam_name); ?>" class="form-control fw-bold bg-transparent border-0 text-dark" readonly>
             </div>
             <br>
             <div class="form-group">
                 <label for="question_types">Question Types</label><br>
                 <?php foreach ($questionTypes as $id => $type) { ?>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="question_type_<?php echo $id; ?>" name="question_types[]" value="<?php echo $id; ?>">
+                        <input class="form-check-input" type="checkbox" id="question_type_<?php echo $id; ?>" name="question_types[]" value="<?php echo $id; ?>"
+                               <?php echo in_array($id, $selectedQuestionTypes) ? 'checked' : ''; ?>>
                         <label class="form-check-label" for="question_type_<?php echo $id; ?>"><?php echo $type; ?></label>
                     </div>
                 <?php } ?>
             </div>
             <br>
-            <!-- Dynamic form fields based on number of questions and types -->
-            <?php echo $formFields; ?>
+            <!-- Submit button to generate form fields -->
             <div class="text-center">
-                <button class="btn btn-danger" type="submit" id="quesSubmitBtn" name="quesSubmitBtn" onclick="disableButton()">Submit</button>
-                <a href="AddQuizz.php" class="btn btn-secondary">Close</a>
+                <button class="btn btn-primary" type="submit" id="generateFormBtn" name="generateFormBtn">Generate Form</button>
             </div>
         </form>
-        <div id="messageDiv">
-            <?php echo $successMessage; ?>
-            <?php echo $errorMessage; ?>
-        </div>
     </div>
 </div>
 
+<!-- HTML form for submitting questions -->
+<div class="container" style="padding:7%;">
+    <div class="col-sm-11 mt-5 jumbotron">
+        <h3 class="text-center">Add Exam Questions</h3>
+        <form id="addQuestionForm" method="POST" enctype="multipart/form-data" action="add_exam_submit.php">
+            <br>
+            <div class="form-group">
+                <input type="hidden" name="exam_category" value="<?php echo htmlspecialchars($exam_name); ?>">
+                <label for="course_name">Exam Category</label>
+                <input type="text" id="name" name="name" value="<?php echo htmlspecialchars($exam_name); ?>" class="form-control fw-bold bg-transparent border-0 text-dark" readonly>
+            </div>
+            <br>
+            <!-- Display success/error messages -->
+            <div id="messageDiv">
+                <?php echo $successMessage; ?>
+                <?php
+                if (!empty($errorMessage)) {
+                    echo $errorMessage;
+                }
+                ?>
+            </div>
+
+            <!-- Form fields will be populated dynamically based on the form generated -->
+            <div id="formFieldsContainer">
+                <?php echo $formFields; ?>
+            </div>
+            <!-- Hidden input to store selected question types -->
+            <?php if (isset($selectedQuestionTypes)) {
+                foreach ($selectedQuestionTypes as $selectedType) {
+                    echo '<input type="hidden" name="selected_question_types[]" value="' . $selectedType . '">';
+                }
+            } ?>
+            <br>
+            <!-- Submit button to submit questions -->
+            <div class="text-center">
+                <button class="btn btn-danger" type="submit" id="quesSubmitBtn" name="quesSubmitBtn" onclick="return validateForm()">Submit Questions</button>
+                <a href="Add exams.php" class="btn btn-secondary">Close</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Include jQuery library -->
+<script src="/ethiolearn/js/jquery-3.3.1.min.js"></script>
+<script>
+// Function to validate the form before submitting
+function validateForm() {
+    let isValid = true;
+    let errorMessage = '';
+
+    // Check for duplicate questions
+    let questions = [];
+    $('input[name="questions[]"]').each(function() {
+        let question = $(this).val().trim();
+        if (questions.includes(question)) {
+            isValid = false;
+            errorMessage += 'Duplicate question detected: ' + question + '<br>';
+        }
+        questions.push(question);
+    });
+
+    // Validate Choose questions
+    $('input[name^="options_choose"]').each(function() {
+        let options = $(this).closest('.form-group').find('input[name^="options_choose"]').map(function() {
+            return $(this).val().trim();
+        }).get();
+
+        if (new Set(options).size !== options.length) {
+            isValid = false;
+            errorMessage += 'Options must be unique for: ' + $(this).closest('.form-group').find('input[name="questions[]"]').val() + '<br>';
+        }
+
+        let correctAnswer = $(this).closest('.form-group').find('input[name="correct_answers[]"]').val().trim();
+        if (!options.includes(correctAnswer)) {
+            isValid = false;
+            errorMessage += 'Correct answer must be one of the options for: ' + $(this).closest('.form-group').find('input[name="questions[]"]').val() + '<br>';
+        }
+    });
+
+    // Display error message if validation fails
+    if (!isValid) {
+        $('#messageDiv').html('<div class="alert alert-danger col-sm-6 ml-5 mt-2">' + errorMessage + '</div>');
+    }
+    return isValid;
+}
+</script>
 <?php
 include_once("Footer.php");
 ?>
-
-<script>
-    function disableButton() {
-        $('#quesSubmitBtn').prop('disabled', true); // Disable the submit button
-    }
-    $(document).ready(function() {
-        $('#addQuestionForm').submit(function(e) {
-            e.preventDefault(); // Prevent form submission
-            console.log('Form submitted'); // Debug statement
-            $.ajax({
-                type: 'POST',
-                url: 'add_question.php',
-                data: $('#addQuestionForm').serialize(), // Serialize form data
-                success: function(response) {
-                    console.log('AJAX success'); // Debug statement
-                    $('#messageDiv').html(response); // Show success/error message
-                    $('#quesSubmitBtn').prop('disabled', false); // Enable the submit button after AJAX success
-                },
-                error: function(xhr, status, error) {
-                    console.error('AJAX error:', error); // Log any errors to the console
-                    $('#quesSubmitBtn').prop('disabled', false); // Enable the submit button after AJAX error
-                }
-            });
-        });
-    });
-</script>

@@ -121,11 +121,36 @@ $mail->send();
 
 
 <link rel="stylesheet" href="CSS/login.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/ethiolearn/js/jquery-3.3.1.min.js"></script>
 <script language="javascript" type="text/javascript">
     window.history.forward();
 </script>
+<style>
+     .goog-logo-link,.goog-te-gadget span{
 
+display:none !important;
+
+}
+
+.goog-te-gadget{
+
+color:transparent!important;
+font-size :0;
+
+}
+.goog-te-banner-frame{
+ display:none !important;
+ }
+ .goog-te-gadget img{
+    display:none !important;
+}
+body > .skiptranslate {
+    display: none;
+}
+body {
+    top: 0px !important;
+}
+    </style>
 <div class="wrapper">
 
 
@@ -199,7 +224,7 @@ $mail->send();
                         <polyline points="8 1 12 5 8 9"></polyline>
                     </svg>
                 </button>
-
+                <div id='google_translate_element'></div>
 
             </form>
         </div>
@@ -250,7 +275,28 @@ $mail->send();
                             </label>
                         </div>
                     </div>
-                    <!-- <a href="#" class="link">Forgot your password?</a> -->
+                    <a href="#" class="link">Forgot your password?</a> 
+                    <div id='google_translate_element'></div>
+            <script src='//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit' async></script>
+<script>
+
+function googleTranslateElementInit() {
+
+new google.translate.TranslateElement({
+
+pageLanguage: 'en',
+
+autoDisplay: 'true',
+
+includedLanguages:'am,en,om', 
+
+layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL
+
+}, 'google_translate_element');
+
+}
+
+</script>
                     <br><br>
                     <button name="login" class="cta">
                         <span>Sign In</span>

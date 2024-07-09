@@ -2,8 +2,7 @@
 ob_start(); // Start output buffering
 include_once("Header copy.php");
 include_once("../DB_Files/db.php");
-include_once("Header copy.php");
-include_once("../DB_Files/db.php");
+
 // Function to send or edit reply
 function sendReply($feedback_id, $reply_content, $conn) {
     $feedback_id = mysqli_real_escape_string($conn, $feedback_id);

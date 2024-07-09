@@ -3,8 +3,8 @@ include_once("Header.php");
 include_once("../DB_Files/db.php");
 ?>
 
-
-<div class="col-sm-9 mt-5">
+<div class="container" style="padding: 6%;">
+<div class="col-sm-12 mt-5">
     <p class="bg-dark text-white p-2">List of Messages</p>
     <?php
     $sql = "SELECT * FROM contact";

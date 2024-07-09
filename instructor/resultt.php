@@ -9,24 +9,28 @@ $offset = ($page - 1) * $itemsPerPage; // Calculate offset
 
 // Fetch and display paginated results
 $output = '';
-$sql = "SELECT * FROM exam_result LIMIT $offset, $itemsPerPage";
+$sql = "SELECT qr.*, s.stu_name 
+        FROM quiz_result qr 
+        JOIN students s ON qr.stu_id = s.stu_id
+        LIMIT $offset, $itemsPerPage";
 $result = mysqli_query($conn, $sql);
-$totalItemsResult = mysqli_query($conn, "SELECT COUNT(id) AS total FROM exam_result");
+$totalItemsResult = mysqli_query($conn, "SELECT COUNT(id) AS total FROM quiz_result");
 $totalItemsRow = mysqli_fetch_assoc($totalItemsResult);
 $totalPages = ceil($totalItemsRow['total'] / $itemsPerPage);
+
 
 if (mysqli_num_rows($result) > 0) {
     $output .= '<div id="initialResults">
                     <table class="table">
                         <tr>
-                            <th class="text-dark fw-bolder">Student Email</th>
+                            <th class="text-dark fw-bolder">Student name</th>
                             <th class="text-dark fw-bolder">Exam Category</th>
                             <th class="text-dark fw-bolder">Mark</th>
                             <th class="text-dark fw-bolder">Exam Time</th>
                         </tr>';
     while ($row = mysqli_fetch_array($result)) {
         $output .= '<tr>
-                        <td class="text-dark fw-bolder">' . $row["email"] . '</td>
+                        <td class="text-dark fw-bolder">' . $row["stu_name"] . '</td>
                         <td class="text-dark fw-bolder">' . $row["exam_type"] . '</td> 
                         <td class="text-dark fw-bolder">' . $row["mark"] . '</td>
                         <td class="text-dark fw-bolder">' . $row["exam_time"] . '</td>
@@ -66,15 +70,14 @@ if (mysqli_num_rows($result) > 0) {
             <option value="10">10 per page</option>
             <option value="20">20 per page</option>
         </select>
-        <input type="text" class="form-control" id="search_text" name="search_text" placeholder="Quiz Category">
+        <input type="text" class="form-control" id="search_text" name="search_text" placeholder="Student Name">
     </div>
     <?php echo $output; ?> <!-- Display initial results and pagination here -->
     <div id="searchResults"></div>
 </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
+<script src="/ethiolearn/js/jquery-3.3.1.min.js"></script><script>
 $(document).ready(function(){
     $('#itemsPerPage').change(function(){
         var itemsPerPage = $(this).val();

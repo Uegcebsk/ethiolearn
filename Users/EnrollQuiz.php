@@ -2,19 +2,19 @@
 include_once("ProfileHeader.php");
 include_once("../DB_Files/db.php");
 ?>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<div class="container">
+<script src="/ethiolearn/js/jquery-3.3.1.min.js"></script>
+<div class="container" style="padding:4%;">
     <div class="row justify-content-center">
-        <div class="col-sm-6 mt-4">
-            <p class="bg-dark text-white p-2 fw-bolder text-center">List of Quiz</p>
+        <div class="col-sm-11 mt-4">
+            <p class="bg-dark text-white p-2 fw-bolder text-center">List of Quizzes</p>
             <br>
             <?php
             $studentId = $_SESSION['stu_id'];
-            $sql = "SELECT ec.* 
+            $sql = "SELECT ec.*, c.course_name 
                     FROM exam_category ec
                     INNER JOIN course c ON ec.course_id = c.course_id
                     INNER JOIN courseorder co ON c.course_id = co.course_id
-                    WHERE co.stu_id = $studentId";
+                    WHERE co.stu_id = $studentId AND ec.active = 1 AND ec.assessment_type = 'quiz'";
             $result = $conn->query($sql);
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
@@ -23,7 +23,7 @@ include_once("../DB_Files/db.php");
             ?>
                     <div class="mt-3">
                         <form action="" method="post">
-                            <input name="test" class="btn btn-secondary border-5 form-control fw-bolder text-light" value="<?php echo $row["exam_name"]; ?>" onclick="set_exam_type_session(this.value);">
+                            <input name="test" type="button" class="btn btn-secondary border-5 form-control fw-bolder text-light" value="<?php echo $row['course_name'] . ' - ' . $row['exam_name']; ?>" onclick="set_exam_type_session('<?php echo $row['exam_name']; ?>');">
                         </form>
                     </div>
             <?php

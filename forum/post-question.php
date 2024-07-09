@@ -1,5 +1,6 @@
 <?php
 include_once("../DB_Files/db.php");
+include_once("../Inc/Header.php");
 
 // Fetch courses from the database
 $sql = "SELECT course_id, course_name FROM course";
@@ -22,38 +23,52 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Post a Question</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://cdn.tiny.cloud/1/oe8cjbuk4afb07uokw5fvh4em4tgv2ozvm5cmopq9p1biwbm/tinymce/5/tinymce.min.js"></script>
-    <script>
-        tinymce.init({
-            selector: 'textarea',
-            height: 300,
-            menubar: false,
-            plugins: [
-                'advlist autolink lists link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table paste code help wordcount'
-            ],
-            toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
-        });
-    </script>
+    <link rel="stylesheet" href="/ethiolearn/bootstrap/css/bootstrap.min.css">
     <style>
         body {
-            font: 14px sans-serif;
-            text-align: center;
-            background-color: #f8f9fa;
+            background-color: #f0f2f5;
+            font-family: 'Arial', sans-serif;
+            padding-right:10%;
         }
 
         .container {
-            margin-top: 50px;
+            margin-top: 7%;
+            max-width: 900px;
+            max-height: 900px;
         }
 
         h1 {
             font-size: 2em;
+            color: #007bff;
         }
 
         form {
             margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            height: 200px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-primary:focus {
+            box-shadow: none;
         }
     </style>
 
@@ -71,7 +86,7 @@ $conn->close();
         };
 
         function validateForm() {
-            var qBody = tinymce.get("q_body").getContent({ format: 'text' });
+            var qBody = document.forms["form1"]["q_body"].value;
             var selectedCourse = document.forms["form1"]["courses"].value;
 
             if (qBody.length <= 10) {
@@ -86,13 +101,12 @@ $conn->close();
 
             return true; // Submit the form if all conditions are fulfilled
         }
-        function displayMessage($msg, $type = 'success') {
-            return '<div class="alert alert-' + type + ' col-sm-6 ml-5 mt-2 m-2">' + msg + '</div>';
-        }
-        
     </script>
 </head>
 <body>
+<?php
+include_once("menu.php");
+?>
     <div class="container">
         <h1 class="my-5">Post a Question</h1>
 
@@ -113,7 +127,4 @@ $conn->close();
         </form>
     </div>
 </body>
-
 </html>
-
-?

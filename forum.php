@@ -3,14 +3,12 @@
 include_once("Inc/Header.php");
 include_once("DB_Files/db.php");
 
-// Check if user is not logged in, redirect to login page
-// 
-/*
+
 if (!isset($_SESSION['stu_email'])) {
     header("Location: Login&SignIn.php");
     exit();
 }
-*/
+
 // Fetch student name based on student ID
 $stu_id = $_SESSION['stu_id'];
 $sql_student = "SELECT stu_name FROM students WHERE stu_id = $stu_id";

@@ -66,11 +66,15 @@ if (isset($_POST['resetPassword'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Password Reset</title>
-    <!-- Include your CSS stylesheets here -->
+    <style>
+        .container{
+            padding:6%;
+        }
+        </style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" style="padding-left=5%;">
     <h2>Password Reset</h2>
     <?php if(isset($resetMsg)) echo $resetMsg; ?>
     <form method="POST">
@@ -81,6 +85,6 @@ if (isset($_POST['resetPassword'])) {
         <button type="submit" class="btn btn-primary" name="resetPassword">Reset Password</button>
     </form>
 </div>
-
+</div>
 </body>
 </html>

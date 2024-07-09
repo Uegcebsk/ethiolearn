@@ -8,8 +8,7 @@ if (!isset($_SESSION['stu_id'])) {
 ?>
 <link rel="stylesheet" href="CSS/watchcourse.css">
 <link rel="stylesheet" href="../bootstrap/css/bootstrap.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<title>Imperial College</title>
+<script src="/ethiolearn/js/jquery-3.3.1.min.js"></script><title></title>
 
 <?php
     if (isset($_GET['course_id'])) {
